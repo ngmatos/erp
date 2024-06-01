@@ -13,5 +13,7 @@ com/example/erp_system/repository/ItemsRepository.class
 com/example/erp_system/repository/OrderItemRepository.class
 com/example/erp_system/model/OrderStatus.class
 com/example/erp_system/model/Items.class
+com/example/erp_system/service/RoleService.class
+com/example/erp_system/controller/RoleController.class
 com/example/erp_system/model/User.class
 com/example/erp_system/model/Order.class

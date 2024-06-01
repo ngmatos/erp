@@ -1,4 +1,5 @@
 /home/diogo/Desktop/PI/erp/erp-system/src/main/java/com/example/erp_system/ErpSystemApplication.java
+/home/diogo/Desktop/PI/erp/erp-system/src/main/java/com/example/erp_system/controller/RoleController.java
 /home/diogo/Desktop/PI/erp/erp-system/src/main/java/com/example/erp_system/controller/UserController.java
 /home/diogo/Desktop/PI/erp/erp-system/src/main/java/com/example/erp_system/model/Category.java
 /home/diogo/Desktop/PI/erp/erp-system/src/main/java/com/example/erp_system/model/Items.java
@@ -14,4 +15,5 @@
 /home/diogo/Desktop/PI/erp/erp-system/src/main/java/com/example/erp_system/repository/OrderStatusRepository.java
 /home/diogo/Desktop/PI/erp/erp-system/src/main/java/com/example/erp_system/repository/RoleRepository.java
 /home/diogo/Desktop/PI/erp/erp-system/src/main/java/com/example/erp_system/repository/UserRepository.java
+/home/diogo/Desktop/PI/erp/erp-system/src/main/java/com/example/erp_system/service/RoleService.java
 /home/diogo/Desktop/PI/erp/erp-system/src/main/java/com/example/erp_system/service/UserService.java

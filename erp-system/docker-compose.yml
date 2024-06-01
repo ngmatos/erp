@@ -16,12 +16,14 @@ services:
       - erp-network
 
   app:
-    image: erp-system-app 
+    build: 
+      context: .
+      dockerfile: Dockerfile
     container_name: app-container
     depends_on:
       - mysql
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/erp_db
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/erp_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: erp2024
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
@@ -32,3 +34,4 @@ services:
 
 networks:
   erp-network:
+    driver: bridge
