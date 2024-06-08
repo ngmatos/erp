@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Estilos para o corpo da página */
+
+/* Estilos para o container principal da aplicação */
+#root {
+  display: flex; /* Use display flex para organizar os elementos */
+  min-height: 100vh; /* Garanta que o container ocupe toda a altura da viewport */
+  flex-direction: column; /* Alinhe os itens verticalmente */
+}
+
+/* Estilos para o cabeçalho */
+.header {
+  background-color: #282c34; /* Cor de fundo do cabeçalho */
+  color: white; /* Cor do texto do cabeçalho */
+  padding: 20px; /* Espaçamento interno */
+}
+
+/* Estilos para o conteúdo principal */
+.main-content {
+  flex: 1; /* Faça com que o conteúdo principal ocupe todo o espaço restante */
+  padding: 20px; /* Espaçamento interno */
+}
+

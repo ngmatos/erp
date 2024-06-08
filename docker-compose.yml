@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: erp2024
+      MYSQL_DATABASE: erp_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      - ./mysql/insert_data.sql:/docker-entrypoint-initdb.d/insert_data.sql
+    networks:
+      - erp-network
+
+  backend:
+    build:
+      context: ./erp-system-backend
+      dockerfile: Dockerfile
+    container_name: backend-container
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/erp_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: erp2024
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+    ports:
+      - "8080:8080"
+    networks:
+      - erp-network
+    command: ["dockerize", "-wait", "tcp://mysql-container:3306", "-timeout", "90s", "java", "-jar", "/app/erp-system-backend.jar"]
+
+  frontend:
+    build:
+      context: ./erp-system-frontend
+      dockerfile: Dockerfile
+    container_name: frontend-container
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+    networks:
+      - erp-network
+    environment:
+      - REACT_APP_BACKEND_URL=http://backend-container:8080/api
+    volumes:
+      - ./erp-system-frontend/src:/app/src
+      - ./erp-system-frontend/public:/app/public
+      - ./erp-system-frontend/package.json:/app/package.json
+      - ./erp-system-frontend/package-lock.json:/app/package-lock.json
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin-container
+    environment:
+      PMA_HOST: mysql-container
+      MYSQL_ROOT_PASSWORD: erp2024
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+    networks:
+      - erp-network
+
+networks:
+  erp-network:
+    driver: bridge
