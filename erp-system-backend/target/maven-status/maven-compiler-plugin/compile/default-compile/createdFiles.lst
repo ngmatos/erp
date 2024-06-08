@@ -1,5 +1,6 @@
 com/example/erp_system/service/impl/UserServiceImpl$1.class
 com/example/erp_system/controller/UserController.class
+com/example/erp_system/controller/employer/EmployerController.class
 com/example/erp_system/dtos/response/JwtAuthenticationResponse$JwtAuthenticationResponseBuilder.class
 com/example/erp_system/repository/OrderStatusRepository.class
 com/example/erp_system/repository/CategoryRepository.class
@@ -13,10 +14,12 @@ com/example/erp_system/model/User$UserBuilder.class
 com/example/erp_system/ErpSystemApplication.class
 com/example/erp_system/repository/OrderItemRepository.class
 com/example/erp_system/model/User.class
+com/example/erp_system/service/impl/EmployerServiceImpl.class
 com/example/erp_system/model/Order.class
 com/example/erp_system/controller/auth/AuthorizationController.class
 com/example/erp_system/controller/auth/AuthenticationController.class
 com/example/erp_system/service/impl/JwtServiceImpl.class
+com/example/erp_system/service/EmployerService.class
 com/example/erp_system/service/UserService.class
 com/example/erp_system/service/ClientService.class
 com/example/erp_system/dtos/request/SigninRequest$SigninRequestBuilder.class

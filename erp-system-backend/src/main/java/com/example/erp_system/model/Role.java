@@ -6,8 +6,8 @@ import jakarta.persistence.Table;
 public enum Role {
     USER(1),
     ADMIN(2),
-    CLIENT(3),
-    EMPLOYER(4);
+    EMPLOYER(3),
+    CLIENT(4);
 
     private final int roleId;
 
