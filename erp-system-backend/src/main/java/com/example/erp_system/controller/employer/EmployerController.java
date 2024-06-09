@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,12 +34,14 @@ public class EmployerController {
         return ResponseEntity.ok(employer);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
     public ResponseEntity<User> createEmployer(@RequestBody User employer) {
         User createdEmployer = employerService.createEmployer(employer);
         return new ResponseEntity<>(createdEmployer, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{employerId}")
     public ResponseEntity<User> updateEmployer(@PathVariable Long employerId, @RequestBody User employerDetails) {
         User updatedEmployer = employerService.updateEmployer(employerId, employerDetails);
@@ -48,6 +51,7 @@ public class EmployerController {
         return ResponseEntity.ok(updatedEmployer);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{employerId}")
     public ResponseEntity<Void> deleteEmployer(@PathVariable Long employerId) {
         employerService.deleteEmployer(employerId);

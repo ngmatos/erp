@@ -1,21 +1,40 @@
 package com.example.erp_system.model;
 
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 @Table(name = "role")
-public enum Role {
-    USER(1),
-    ADMIN(2),
-    EMPLOYER(3),
-    CLIENT(4);
+public class Role {
 
-    private final int roleId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    Role(int roleId) {
-        this.roleId = roleId;
+    private String roleName;
+
+    // getters e setters
+
+    public Long getRoleId() {
+        return id;
     }
 
-    public int getRoleId() {
-        return roleId;
+    public void setRoleId(Long id) {
+        this.id = id;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 }

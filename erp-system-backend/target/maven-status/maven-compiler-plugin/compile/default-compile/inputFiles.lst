@@ -1,4 +1,5 @@
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/controller/UserController.java
+/home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/impl/UserAuthServiceImpl.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/impl/AuthenticationServiceImpl.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/controller/employer/EmployerController.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/UserService.java
@@ -8,11 +9,13 @@
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/model/Items.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/controller/auth/AuthorizationController.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/repository/OrderItemRepository.java
+/home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/repository/RoleRepository.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/model/OrderStatus.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/repository/ItemsRepository.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/dtos/request/SignUpRequest.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/EmployerService.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/repository/OrderRepository.java
+/home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/RoleService.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/repository/CategoryRepository.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/dtos/response/JwtAuthenticationResponse.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/model/User.java
@@ -31,4 +34,7 @@
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/impl/EmployerServiceImpl.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/model/OrderItem.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/AuthenticationService.java
+/home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/UserAuthService.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/config/SecurityConfiguration.java
+/home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/utils/PasswordUpdateUtility.java
+/home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/impl/RoleServiceImpl.java

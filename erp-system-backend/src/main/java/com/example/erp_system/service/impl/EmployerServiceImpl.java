@@ -2,9 +2,11 @@ package com.example.erp_system.service.impl;
 
 import com.example.erp_system.model.Role;
 import com.example.erp_system.model.User;
+import com.example.erp_system.repository.RoleRepository;
 import com.example.erp_system.repository.UserRepository;
 import com.example.erp_system.service.EmployerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -17,9 +19,15 @@ public class EmployerServiceImpl implements EmployerService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public List<User> getAllEmployers() {
-        return userRepository.findAllByRoleId(Role.EMPLOYER.getRoleId());
+        return userRepository.findAllByRoleId(roleRepository.findByRoleName("EMPLOYER").getId());
     }
 
     @Override
@@ -30,7 +38,9 @@ public class EmployerServiceImpl implements EmployerService {
 
     @Override
     public User createEmployer(User employer) {
-        employer.setRoleId(Role.EMPLOYER.getRoleId());
+        employer.setRole(roleRepository.findByRoleName("EMPLOYER"));
+        String encodedPassword = passwordEncoder.encode(employer.getPassword());
+        employer.setPassword(encodedPassword);
         return userRepository.save(employer);
     }
 

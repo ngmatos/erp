@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     // Método para buscar todos os usuários por função (role)
-    List<User> findAllByRoleId(int roleId);
+    List<User> findAllByRoleId(Long role_id);
 
     // Método para encontrar um usuário pelo email
     Optional<User> findByEmail(String email);

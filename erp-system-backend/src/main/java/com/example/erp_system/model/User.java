@@ -42,14 +42,15 @@ public class User implements UserDetails {
     @Size(min = 10, max = 100, message = "O endereço deve ter entre 10 e 100 caracteres")
     private String address;
 
-    @Column(name = "role_id", nullable = false)
-    private int roleId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
+    //@Transient
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + Role.values()[roleId - 1]));
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));
     }
-
 
     // Getters and Setters
 
@@ -95,12 +96,12 @@ public class User implements UserDetails {
         this.address = address;
     }
 
-    public int getRoleId() {
-        return roleId;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoleId(int role) {
-        this.roleId = role;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     @Override
