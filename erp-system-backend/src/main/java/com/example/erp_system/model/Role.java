@@ -16,17 +16,19 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
+    //unique
+    @Column(name = "role_name",nullable = false, unique = true)
     private String roleName;
 
     // getters e setters
 
-    public Long getRoleId() {
+    public int getRoleId() {
         return id;
     }
 
-    public void setRoleId(Long id) {
+    public void setRoleId(int id) {
         this.id = id;
     }
 

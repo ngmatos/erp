@@ -26,7 +26,7 @@ public class ClientController {
     }
 
     @GetMapping("/{clientId}")
-    public ResponseEntity<User> getClientById(@PathVariable Long clientId) {
+    public ResponseEntity<User> getClientById(@PathVariable int clientId) {
         User client = clientService.getClientById(clientId);
         if (client == null) {
             return ResponseEntity.notFound().build();
@@ -43,7 +43,7 @@ public class ClientController {
 
     @PreAuthorize("hasAnyRole('EMPLOYER', 'ADMIN')")
     @PutMapping("/{clientId}")
-    public ResponseEntity<User> updateClient(@PathVariable Long clientId, @RequestBody User clientDetails) {
+    public ResponseEntity<User> updateClient(@PathVariable int clientId, @RequestBody User clientDetails) {
         User updatedClient = clientService.updateClient(clientId, clientDetails);
         if (updatedClient == null) {
             return ResponseEntity.notFound().build();
@@ -53,7 +53,7 @@ public class ClientController {
 
     @PreAuthorize("hasAnyRole('EMPLOYER', 'ADMIN')")
     @DeleteMapping("/{clientId}")
-    public ResponseEntity<Void> deleteClient(@PathVariable Long clientId) {
+    public ResponseEntity<Void> deleteClient(@PathVariable int clientId) {
         clientService.deleteClient(clientId);
         return ResponseEntity.noContent().build();
     }

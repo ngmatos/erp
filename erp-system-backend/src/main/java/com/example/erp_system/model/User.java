@@ -26,7 +26,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private Long id;
+    private int id;
 
     @NotBlank(message = "A senha é obrigatória")
     @Size(min = 8, max = 100, message = "A senha deve ter entre 8 e 100 caracteres")
@@ -54,11 +54,11 @@ public class User implements UserDetails {
 
     // Getters and Setters
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

@@ -26,7 +26,7 @@ public class EmployerController {
     }
 
     @GetMapping("/{employerId}")
-    public ResponseEntity<User> getEmployerById(@PathVariable Long employerId) {
+    public ResponseEntity<User> getEmployerById(@PathVariable int employerId) {
         User employer = employerService.getEmployerById(employerId);
         if (employer == null) {
             return ResponseEntity.notFound().build();
@@ -43,7 +43,7 @@ public class EmployerController {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{employerId}")
-    public ResponseEntity<User> updateEmployer(@PathVariable Long employerId, @RequestBody User employerDetails) {
+    public ResponseEntity<User> updateEmployer(@PathVariable int employerId, @RequestBody User employerDetails) {
         User updatedEmployer = employerService.updateEmployer(employerId, employerDetails);
         if (updatedEmployer == null) {
             return ResponseEntity.notFound().build();
@@ -53,7 +53,7 @@ public class EmployerController {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{employerId}")
-    public ResponseEntity<Void> deleteEmployer(@PathVariable Long employerId) {
+    public ResponseEntity<Void> deleteEmployer(@PathVariable int employerId) {
         employerService.deleteEmployer(employerId);
         return ResponseEntity.noContent().build();
     }

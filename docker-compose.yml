@@ -11,7 +11,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./mysql/mysql-data:/var/lib/mysql
+      #- ./mysql/mysql-data:/var/lib/mysql # Guardar Backup de Database
       - ./mysql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
       - ./mysql/insert_data.sql:/docker-entrypoint-initdb.d/insert_data.sql
     networks:

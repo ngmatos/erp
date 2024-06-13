@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Integer> {
     // Método para buscar todos os usuários por função (role)
-    List<User> findAllByRoleId(Long role_id);
+    List<User> findAllByRoleId(int role_id);
 
     // Método para encontrar um usuário pelo email
     Optional<User> findByEmail(String email);

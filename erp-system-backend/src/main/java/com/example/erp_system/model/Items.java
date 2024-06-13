@@ -2,30 +2,40 @@ package com.example.erp_system.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "items")
 public class Items {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @NotBlank(message = "O nome é obrigatório")
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "category_id", nullable = false)
-    private int categoryId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
     @Column(name = "stock_quantity")
     private int stockQuantity;
 
     // Getters and Setters
 
-    public Long getItemId() {
+    public int getItemId() {
         return id;
     }
 
-    public void setItemId(Long id) {
+    public void setItemId(int id) {
         this.id = id;
     }
 
@@ -37,10 +47,10 @@ public class Items {
         this.name = name;
     }
 
-    public int getCategoryId() { return categoryId; }
+    public Category getCategory() { return category; }
 
-    public void setCategoryId(int category) {
-            this.categoryId = category;
+    public void setCategory(Category category) {
+            this.category = category;
     }
 
     public int getStockQuantity() {

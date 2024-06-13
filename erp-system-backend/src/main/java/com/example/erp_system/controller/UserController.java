@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable Long userId) {
+    public ResponseEntity<User> getUserById(@PathVariable int userId) {
         User user = userService.getUserById(userId);
         if (user == null) {
             return ResponseEntity.notFound().build();
@@ -46,7 +46,7 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @PutMapping("/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable Long userId, @Valid @RequestBody User userDetails) {
+    public ResponseEntity<User> updateUser(@PathVariable int userId, @Valid @RequestBody User userDetails) {
         User updatedUser = userService.updateUser(userId, userDetails);
         if (updatedUser == null) {
             return ResponseEntity.notFound().build();
@@ -56,14 +56,14 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+    public ResponseEntity<Void> deleteUser(@PathVariable int userId) {
         userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{userId}/role")
-    public ResponseEntity<User> updateRoleUser(@PathVariable Long userId, @Valid @RequestBody User userDetails) {
+    public ResponseEntity<User> updateRoleUser(@PathVariable int userId, @Valid @RequestBody User userDetails) {
         User updatedUser = userService.updateRoleUser(userId, userDetails);
         if (updatedUser == null) {
             return ResponseEntity.notFound().build();

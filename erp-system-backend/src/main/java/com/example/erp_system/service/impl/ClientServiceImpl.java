@@ -30,7 +30,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public User getClientById(Long id) {
+    public User getClientById(int id) {
         Optional<User> optionalClient = userRepository.findById(id);
         return optionalClient.orElse(null);
     }
@@ -46,7 +46,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public User updateClient(Long id, User clientDetails) {
+    public User updateClient(int id, User clientDetails) {
         Optional<User> optionalClient = userRepository.findById(id);
         if (optionalClient.isPresent()) {
             User existingClient = optionalClient.get();
@@ -59,7 +59,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void deleteClient(Long id) {
+    public void deleteClient(int id) {
         userRepository.deleteById(id);
     }
 }

@@ -31,7 +31,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public User getEmployerById(Long id) {
+    public User getEmployerById(int id) {
         Optional<User> optionalEmployer = userRepository.findById(id);
         return optionalEmployer.orElse(null);
     }
@@ -45,7 +45,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public User updateEmployer(Long id, User employerDetails) {
+    public User updateEmployer(int id, User employerDetails) {
         Optional<User> optionalEmployer = userRepository.findById(id);
         if (optionalEmployer.isPresent()) {
             User existingEmployer = optionalEmployer.get();
@@ -58,7 +58,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public void deleteEmployer(Long id) {
+    public void deleteEmployer(int id) {
         userRepository.deleteById(id);
     }
 }
