@@ -2,6 +2,8 @@ package com.example.erp_system.controller;
 
 import com.example.erp_system.model.User;
 import com.example.erp_system.service.UserService;
+import com.example.erp_system.exception.CustomExceptions.UserNotFoundException;
+import com.example.erp_system.exception.CustomExceptions.UserCreationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,45 +32,56 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable int userId) {
-        User user = userService.getUserById(userId);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            User user = userService.getUserById(userId);
+            return ResponseEntity.ok(user);
+        } catch (UserNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return ResponseEntity.ok(user);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @PostMapping
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-        User createdUser = userService.createUser(user);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        try {
+            User createdUser = userService.createUser(user);
+            return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        } catch (UserCreationException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @PutMapping("/{userId}")
     public ResponseEntity<User> updateUser(@PathVariable int userId, @Valid @RequestBody User userDetails) {
-        User updatedUser = userService.updateUser(userId, userDetails);
-        if (updatedUser == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            User updatedUser = userService.updateUser(userId, userDetails);
+            return ResponseEntity.ok(updatedUser);
+        } catch (UserNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return ResponseEntity.ok(updatedUser);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable int userId) {
-        userService.deleteUser(userId);
-        return ResponseEntity.noContent().build();
+        try {
+            userService.deleteUser(userId);
+            return ResponseEntity.noContent().build();
+        } catch (UserNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{userId}/role")
     public ResponseEntity<User> updateRoleUser(@PathVariable int userId, @Valid @RequestBody User userDetails) {
-        User updatedUser = userService.updateRoleUser(userId, userDetails);
-        if (updatedUser == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            User updatedUser = userService.updateRoleUser(userId, userDetails);
+            return ResponseEntity.ok(updatedUser);
+        } catch (UserNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return ResponseEntity.ok(updatedUser);
     }
 
     @GetMapping("/current")
@@ -77,5 +90,4 @@ public class UserController {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(user);
     }
-
 }

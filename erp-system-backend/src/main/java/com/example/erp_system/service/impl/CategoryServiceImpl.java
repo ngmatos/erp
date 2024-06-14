@@ -3,6 +3,8 @@ package com.example.erp_system.service.impl;
 import com.example.erp_system.model.Category;
 import com.example.erp_system.repository.CategoryRepository;
 import com.example.erp_system.service.CategoryService;
+import com.example.erp_system.exception.CustomExceptions.CategoryCreationException;
+import com.example.erp_system.exception.CustomExceptions.CategoryNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,23 +34,27 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category createCategory(Category category) {
-        return categoryRepository.save(category);
-    }
-
-    @Override
-    public Optional<Category> updateCategory(int id, Category categoryDetails) {
-        Optional<Category> categoryOptional = categoryRepository.findById(id);
-        if (categoryOptional.isPresent()) {
-            Category category = categoryOptional.get();
-            category.setCategoryName(categoryDetails.getCategoryName());
-            return Optional.of(categoryRepository.save(category));
-        } else {
-            return Optional.empty();
+        try {
+            return categoryRepository.save(category);
+        } catch (Exception e) {
+            throw new CategoryCreationException("Failed to create category: " + e.getMessage());
         }
     }
 
     @Override
+    public Optional<Category> updateCategory(int id, Category categoryDetails) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found with id " + id));
+
+        category.setCategoryName(categoryDetails.getCategoryName());
+        return Optional.of(categoryRepository.save(category));
+    }
+
+    @Override
     public void deleteCategory(int id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new CategoryNotFoundException("Category not found with id " + id);
+        }
         categoryRepository.deleteById(id);
     }
 }

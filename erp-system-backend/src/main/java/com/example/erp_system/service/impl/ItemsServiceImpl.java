@@ -5,6 +5,8 @@ import com.example.erp_system.model.Items;
 import com.example.erp_system.repository.CategoryRepository;
 import com.example.erp_system.repository.ItemsRepository;
 import com.example.erp_system.service.ItemsService;
+import com.example.erp_system.exception.CustomExceptions.ItemsCreationException;
+import com.example.erp_system.exception.CustomExceptions.ItemsNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,8 +42,6 @@ public class ItemsServiceImpl implements ItemsService {
         return Collections.emptyList();
     }
 
-
-
     @Override
     public List<Items> getAllItemsByStockQuantity(int stockQuantity) {
         return itemsRepository.findAllByStockQuantity(stockQuantity);
@@ -49,38 +49,44 @@ public class ItemsServiceImpl implements ItemsService {
 
     @Override
     public Items getItemById(int id) {
-        return itemsRepository.findById(id).orElse(null);
+        return itemsRepository.findById(id)
+                .orElseThrow(() -> new ItemsNotFoundException("Item not found with id " + id));
     }
 
     @Override
     public Items createItem(Items item) {
-        return itemsRepository.save(item);
+        try {
+            return itemsRepository.save(item);
+        } catch (Exception e) {
+            throw new ItemsCreationException("Failed to create item: " + e.getMessage());
+        }
     }
 
     @Override
     public Items updateItem(int id, Items itemDetails) {
-        Items item = itemsRepository.findById(id).orElse(null);
-        if (item != null) {
-            item.setItemName(itemDetails.getItemName());
-            item.setCategory(itemDetails.getCategory());
-            item.setStockQuantity(itemDetails.getStockQuantity());
-            return itemsRepository.save(item);
-        }
-        return null;
+        Items item = itemsRepository.findById(id)
+                .orElseThrow(() -> new ItemsNotFoundException("Item not found with id " + id));
+
+        item.setItemName(itemDetails.getItemName());
+        item.setCategory(itemDetails.getCategory());
+        item.setStockQuantity(itemDetails.getStockQuantity());
+        return itemsRepository.save(item);
     }
 
     @Override
     public void deleteItem(int id) {
+        if (!itemsRepository.existsById(id)) {
+            throw new ItemsNotFoundException("Item not found with id " + id);
+        }
         itemsRepository.deleteById(id);
     }
 
     @Override
     public Items updateStockQuantity(int id, int stockQuantity) {
-        Items item = itemsRepository.findById(id).orElse(null);
-        if (item != null) {
-            item.setStockQuantity(stockQuantity);
-            return itemsRepository.save(item);
-        }
-        return null;
+        Items item = itemsRepository.findById(id)
+                .orElseThrow(() -> new ItemsNotFoundException("Item not found with id " + id));
+
+        item.setStockQuantity(stockQuantity);
+        return itemsRepository.save(item);
     }
 }

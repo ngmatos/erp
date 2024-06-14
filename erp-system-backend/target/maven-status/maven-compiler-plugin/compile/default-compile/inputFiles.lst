@@ -16,6 +16,7 @@
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/impl/EmployerServiceImpl.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/AuthenticationService.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/UserAuthService.java
+/home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/exception/ErrorResponse.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/CategoryService.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/controller/UserController.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/impl/OrderStatusServiceImpl.java
@@ -31,6 +32,7 @@
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/model/OrderStatus.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/repository/ItemsRepository.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/dtos/request/SignUpRequest.java
+/home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/exception/CustomExceptions.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/EmployerService.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/dtos/response/JwtAuthenticationResponse.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/model/User.java
@@ -52,4 +54,5 @@
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/config/SecurityConfiguration.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/ItemsService.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/utils/PasswordUpdateUtility.java
+/home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/exception/GlobalExceptionHandler.java
 /home/diogo/Desktop/PI/erp/erp-system-backend/src/main/java/com/example/erp_system/service/impl/RoleServiceImpl.java

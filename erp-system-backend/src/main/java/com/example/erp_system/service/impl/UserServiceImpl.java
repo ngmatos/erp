@@ -5,6 +5,8 @@ import com.example.erp_system.model.User;
 import com.example.erp_system.repository.RoleRepository;
 import com.example.erp_system.repository.UserRepository;
 import com.example.erp_system.service.UserService;
+import com.example.erp_system.exception.CustomExceptions.UserCreationException;
+import com.example.erp_system.exception.CustomExceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,44 +33,47 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(int id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        return optionalUser.orElse(null);
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
     }
 
     @Override
     public User createUser(User user) {
-        user.setRole(roleRepository.findByRoleName("USER"));
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-        return userRepository.save(user);
+        try {
+            user.setRole(roleRepository.findByRoleName("USER"));
+            String encodedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encodedPassword);
+            return userRepository.save(user);
+        } catch (Exception e) {
+            throw new UserCreationException("Failed to create user: " + e.getMessage());
+        }
     }
 
     @Override
     public User updateUser(int id, User userDetails) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            User existingUser = optionalUser.get();
-            existingUser.setName(userDetails.getName());
-            existingUser.setEmail(userDetails.getEmail());
-            existingUser.setAddress(userDetails.getAddress());
-            return userRepository.save(existingUser);
-        }
-        return null;
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
+
+        existingUser.setName(userDetails.getName());
+        existingUser.setEmail(userDetails.getEmail());
+        existingUser.setAddress(userDetails.getAddress());
+        return userRepository.save(existingUser);
     }
 
     @Override
     public void deleteUser(int id) {
+        if (!userRepository.existsById(id)) {
+            throw new UserNotFoundException("User not found with id " + id);
+        }
         userRepository.deleteById(id);
     }
 
     @Override
     public User updateRoleUser(int id, User userDetails) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            User existingUser = optionalUser.get();
-            existingUser.setRole(userDetails.getRole());
-            return userRepository.save(existingUser);
-        }
-        return null;
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
+
+        existingUser.setRole(userDetails.getRole());
+        return userRepository.save(existingUser);
     }
 }

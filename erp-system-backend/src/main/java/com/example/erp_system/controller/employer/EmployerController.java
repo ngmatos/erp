@@ -2,6 +2,8 @@ package com.example.erp_system.controller.employer;
 
 import com.example.erp_system.model.User;
 import com.example.erp_system.service.EmployerService;
+import com.example.erp_system.exception.CustomExceptions.EmployerNotFoundException;
+import com.example.erp_system.exception.CustomExceptions.EmployerCreationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,34 +29,44 @@ public class EmployerController {
 
     @GetMapping("/{employerId}")
     public ResponseEntity<User> getEmployerById(@PathVariable int employerId) {
-        User employer = employerService.getEmployerById(employerId);
-        if (employer == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            User employer = employerService.getEmployerById(employerId);
+            return ResponseEntity.ok(employer);
+        } catch (EmployerNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return ResponseEntity.ok(employer);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
     public ResponseEntity<User> createEmployer(@RequestBody User employer) {
-        User createdEmployer = employerService.createEmployer(employer);
-        return new ResponseEntity<>(createdEmployer, HttpStatus.CREATED);
+        try {
+            User createdEmployer = employerService.createEmployer(employer);
+            return new ResponseEntity<>(createdEmployer, HttpStatus.CREATED);
+        } catch (EmployerCreationException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{employerId}")
     public ResponseEntity<User> updateEmployer(@PathVariable int employerId, @RequestBody User employerDetails) {
-        User updatedEmployer = employerService.updateEmployer(employerId, employerDetails);
-        if (updatedEmployer == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            User updatedEmployer = employerService.updateEmployer(employerId, employerDetails);
+            return ResponseEntity.ok(updatedEmployer);
+        } catch (EmployerNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return ResponseEntity.ok(updatedEmployer);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{employerId}")
     public ResponseEntity<Void> deleteEmployer(@PathVariable int employerId) {
-        employerService.deleteEmployer(employerId);
-        return ResponseEntity.noContent().build();
+        try {
+            employerService.deleteEmployer(employerId);
+            return ResponseEntity.noContent().build();
+        } catch (EmployerNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }

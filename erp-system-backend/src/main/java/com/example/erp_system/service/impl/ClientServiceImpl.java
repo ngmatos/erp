@@ -5,6 +5,8 @@ import com.example.erp_system.model.User;
 import com.example.erp_system.repository.RoleRepository;
 import com.example.erp_system.repository.UserRepository;
 import com.example.erp_system.service.ClientService;
+import com.example.erp_system.exception.CustomExceptions.ClientCreationException;
+import com.example.erp_system.exception.CustomExceptions.ClientNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,35 +33,40 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public User getClientById(int id) {
-        Optional<User> optionalClient = userRepository.findById(id);
-        return optionalClient.orElse(null);
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ClientNotFoundException("Client not found with id " + id));
     }
 
     @Override
     public User createClient(User client) {
-        client.setRole(roleRepository.findByRoleName("CLIENT"));
+        try {
+            client.setRole(roleRepository.findByRoleName("CLIENT"));
 
-        String encodedPassword = passwordEncoder.encode(client.getPassword());
-        client.setPassword(encodedPassword);
+            String encodedPassword = passwordEncoder.encode(client.getPassword());
+            client.setPassword(encodedPassword);
 
-        return userRepository.save(client);
+            return userRepository.save(client);
+        } catch (Exception e) {
+            throw new ClientCreationException("Failed to create client: " + e.getMessage());
+        }
     }
 
     @Override
     public User updateClient(int id, User clientDetails) {
-        Optional<User> optionalClient = userRepository.findById(id);
-        if (optionalClient.isPresent()) {
-            User existingClient = optionalClient.get();
-            existingClient.setName(clientDetails.getName());
-            existingClient.setEmail(clientDetails.getEmail());
-            existingClient.setAddress(clientDetails.getAddress());
-            return userRepository.save(existingClient);
-        }
-        return null;
+        User existingClient = userRepository.findById(id)
+                .orElseThrow(() -> new ClientNotFoundException("Client not found with id " + id));
+
+        existingClient.setName(clientDetails.getName());
+        existingClient.setEmail(clientDetails.getEmail());
+        existingClient.setAddress(clientDetails.getAddress());
+        return userRepository.save(existingClient);
     }
 
     @Override
     public void deleteClient(int id) {
+        if (!userRepository.existsById(id)) {
+            throw new ClientNotFoundException("Client not found with id " + id);
+        }
         userRepository.deleteById(id);
     }
 }

@@ -2,6 +2,8 @@ package com.example.erp_system.controller.orders;
 
 import com.example.erp_system.model.OrderStatus;
 import com.example.erp_system.service.OrderStatusService;
+import com.example.erp_system.exception.CustomExceptions.OrderStatusCreationException;
+import com.example.erp_system.exception.CustomExceptions.OrderStatusNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,51 +17,61 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrdersStatusController {
 
-    @Autowired
-    private OrderStatusService ordersStatusService;
+    private final OrderStatusService orderStatusService;
 
     @GetMapping
     public ResponseEntity<List<OrderStatus>> getAllOrdersStatus() {
-        List<OrderStatus> ordersStatus = ordersStatusService.getAllOrdersStatus();
+        List<OrderStatus> ordersStatus = orderStatusService.getAllOrdersStatus();
         return ResponseEntity.ok(ordersStatus);
     }
 
     @GetMapping("/{orderStatusId}")
     public ResponseEntity<OrderStatus> getOrderStatusById(@PathVariable int orderStatusId) {
-        Optional<OrderStatus> orderStatus = ordersStatusService.getOrderStatusById(orderStatusId);
-        if (orderStatus.isPresent()) {
+        try {
+            Optional<OrderStatus> orderStatus = orderStatusService.getOrderStatusById(orderStatusId);
             return ResponseEntity.ok(orderStatus.get());
+        } catch (OrderStatusNotFoundException ex) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/name/{orderStatusName}")
     public ResponseEntity<OrderStatus> getOrderStatusByName(@PathVariable String orderStatusName) {
-        Optional<OrderStatus> orderStatus = ordersStatusService.getOrderStatusByName(orderStatusName);
-        if (orderStatus.isPresent()) {
+        try {
+            Optional<OrderStatus> orderStatus = orderStatusService.getOrderStatusByName(orderStatusName);
             return ResponseEntity.ok(orderStatus.get());
+        } catch (OrderStatusNotFoundException ex) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
     public ResponseEntity<OrderStatus> createOrderStatus(@RequestBody OrderStatus orderStatusDetails) {
-        OrderStatus createdOrderStatus = ordersStatusService.createOrderStatus(orderStatusDetails);
-        return ResponseEntity.ok(createdOrderStatus);
+        try {
+            OrderStatus createdOrderStatus = orderStatusService.createOrderStatus(orderStatusDetails);
+            return ResponseEntity.ok(createdOrderStatus);
+        } catch (OrderStatusCreationException ex) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/{orderStatusId}")
     public ResponseEntity<OrderStatus> updateOrderStatus(@PathVariable int orderStatusId, @RequestBody OrderStatus orderStatusDetails) {
-        Optional<OrderStatus> updatedOrderStatus = ordersStatusService.updateOrderStatus(orderStatusId, orderStatusDetails);
-        if (updatedOrderStatus.isPresent()) {
+        try {
+            Optional<OrderStatus> updatedOrderStatus = orderStatusService.updateOrderStatus(orderStatusId, orderStatusDetails);
             return ResponseEntity.ok(updatedOrderStatus.get());
+        } catch (OrderStatusNotFoundException ex) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{orderStatusId}")
     public ResponseEntity<Void> deleteOrderStatus(@PathVariable int orderStatusId) {
-        ordersStatusService.deleteOrderStatus(orderStatusId);
-        return ResponseEntity.noContent().build();
+        try {
+            orderStatusService.deleteOrderStatus(orderStatusId);
+            return ResponseEntity.noContent().build();
+        } catch (OrderStatusNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

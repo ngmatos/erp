@@ -7,6 +7,9 @@ import com.example.erp_system.repository.ItemsRepository;
 import com.example.erp_system.repository.OrderItemRepository;
 import com.example.erp_system.repository.OrderRepository;
 import com.example.erp_system.service.OrderItemService;
+import com.example.erp_system.exception.CustomExceptions.OrderItemCreationException;
+import com.example.erp_system.exception.CustomExceptions.OrderItemNotFoundException;
+import com.example.erp_system.exception.CustomExceptions.OrderItemUpdateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -77,7 +80,11 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     public OrderItem createOrderItem(OrderItem orderItem) {
-        return orderItemRepository.save(orderItem);
+        try {
+            return orderItemRepository.save(orderItem);
+        } catch (Exception e) {
+            throw new OrderItemCreationException("Falha ao criar item de pedido: " + e.getMessage());
+        }
     }
 
     @Override
@@ -90,12 +97,15 @@ public class OrderItemServiceImpl implements OrderItemService {
             updatedOrderItem.setQuantity(orderItemDetails.getQuantity());
             return Optional.of(orderItemRepository.save(updatedOrderItem));
         } else {
-            return Optional.empty();
+            throw new OrderItemUpdateException("Item de pedido não encontrado com o ID " + id);
         }
     }
 
     @Override
     public void deleteOrderItem(int id) {
+        if (!orderItemRepository.existsById(id)) {
+            throw new OrderItemNotFoundException("Item de pedido não encontrado com o ID " + id);
+        }
         orderItemRepository.deleteById(id);
     }
 
@@ -107,8 +117,7 @@ public class OrderItemServiceImpl implements OrderItemService {
             updatedOrderItem.setQuantity(quantity);
             return Optional.of(orderItemRepository.save(updatedOrderItem));
         } else {
-            return Optional.empty();
+            throw new OrderItemUpdateException("Item de pedido não encontrado com o ID " + id);
         }
     }
-
 }

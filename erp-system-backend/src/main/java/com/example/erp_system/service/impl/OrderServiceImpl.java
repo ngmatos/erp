@@ -7,6 +7,9 @@ import com.example.erp_system.repository.OrderRepository;
 import com.example.erp_system.repository.OrderStatusRepository;
 import com.example.erp_system.repository.UserRepository;
 import com.example.erp_system.service.OrderService;
+import com.example.erp_system.exception.CustomExceptions.OrderCreationException;
+import com.example.erp_system.exception.CustomExceptions.OrderNotFoundException;
+import com.example.erp_system.exception.CustomExceptions.OrderUpdateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -82,14 +85,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order getOrderById(int id) {
-        return orderRepository.findById(id).orElse(null);
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found with id " + id));
     }
 
     @Override
     public Order createOrder(Order order) {
-        order.setOrderNo(generateOrderNo());
-        order.setDateCreated(Date.from(Instant.now()));
-        return orderRepository.save(order);
+        try {
+            order.setOrderNo(generateOrderNo());
+            order.setDateCreated(Date.from(Instant.now()));
+            return orderRepository.save(order);
+        } catch (Exception e) {
+            throw new OrderCreationException("Failed to create order: " + e.getMessage());
+        }
     }
 
     @Override
@@ -101,12 +109,16 @@ public class OrderServiceImpl implements OrderService {
             order.setDateOrdered(orderDetails.getDateOrdered());
             order.setCustomer(orderDetails.getCustomer());
             return orderRepository.save(order);
+        } else {
+            throw new OrderUpdateException("Order not found with id " + id);
         }
-        return null;
     }
 
     @Override
     public void deleteOrder(int id) {
+        if (!orderRepository.existsById(id)) {
+            throw new OrderNotFoundException("Order not found with id " + id);
+        }
         orderRepository.deleteById(id);
     }
 

@@ -2,12 +2,16 @@ package com.example.erp_system.controller.orders;
 
 import com.example.erp_system.model.OrderItem;
 import com.example.erp_system.service.OrderItemService;
+import com.example.erp_system.exception.CustomExceptions.OrderItemNotFoundException;
+import com.example.erp_system.exception.CustomExceptions.OrderItemCreationException;
+import com.example.erp_system.exception.CustomExceptions.OrderItemUpdateException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/orderItems")
@@ -29,11 +33,14 @@ public class OrderItemsController {
     @GetMapping("/quantity/{quantity}")
     public ResponseEntity<List<OrderItem>> getOrderItemsByQuantity(@PathVariable int quantity) {
         try {
-            List<OrderItem> orderItems = orderItemService.getOrderItemsByQuantity(quantity).orElse(null);
-            if (orderItems == null) {
+            Optional<List<OrderItem>> orderItems = orderItemService.getOrderItemsByQuantity(quantity);
+            if (orderItems.isPresent() && !orderItems.get().isEmpty()) {
+                return ResponseEntity.ok(orderItems.get());
+            } else {
                 return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.ok(orderItems);
+        } catch (OrderItemNotFoundException ex) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -42,11 +49,14 @@ public class OrderItemsController {
     @GetMapping("/itemName/{itemName}")
     public ResponseEntity<List<OrderItem>> getOrderItemsByItemName(@PathVariable String itemName) {
         try {
-            List<OrderItem> orderItems = orderItemService.getOrderItemsByItemName(itemName).orElse(null);
-            if (orderItems == null) {
+            Optional<List<OrderItem>> orderItems = orderItemService.getOrderItemsByItemName(itemName);
+            if (orderItems.isPresent() && !orderItems.get().isEmpty()) {
+                return ResponseEntity.ok(orderItems.get());
+            } else {
                 return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.ok(orderItems);
+        } catch (OrderItemNotFoundException ex) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -55,11 +65,14 @@ public class OrderItemsController {
     @GetMapping("/orderNo/{orderNo}")
     public ResponseEntity<List<OrderItem>> getOrderItemsByOrderNo(@PathVariable String orderNo) {
         try {
-            List<OrderItem> orderItems = orderItemService.getOrderItemsByOrderNo(orderNo).orElse(null);
-            if (orderItems == null) {
+            Optional<List<OrderItem>> orderItems = orderItemService.getOrderItemsByOrderNo(orderNo);
+            if (orderItems.isPresent() && !orderItems.get().isEmpty()) {
+                return ResponseEntity.ok(orderItems.get());
+            } else {
                 return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.ok(orderItems);
+        } catch (OrderItemNotFoundException ex) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -68,11 +81,14 @@ public class OrderItemsController {
     @GetMapping("/{id}")
     public ResponseEntity<OrderItem> getOrderItemById(@PathVariable int id) {
         try {
-            OrderItem orderItem = orderItemService.getOrderItemById(id).orElse(null);
-            if (orderItem == null) {
+            Optional<OrderItem> orderItem = orderItemService.getOrderItemById(id);
+            if (orderItem.isPresent()) {
+                return ResponseEntity.ok(orderItem.get());
+            } else {
                 return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.ok(orderItem);
+        } catch (OrderItemNotFoundException ex) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -83,6 +99,8 @@ public class OrderItemsController {
         try {
             OrderItem newOrderItem = orderItemService.createOrderItem(orderItem);
             return ResponseEntity.ok(newOrderItem);
+        } catch (OrderItemCreationException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -91,11 +109,14 @@ public class OrderItemsController {
     @PutMapping("/{id}")
     public ResponseEntity<OrderItem> updateOrderItem(@PathVariable int id, @RequestBody OrderItem orderItemDetails) {
         try {
-            OrderItem updatedOrderItem = orderItemService.updateOrderItem(id, orderItemDetails).orElse(null);
-            if (updatedOrderItem == null) {
+            Optional<OrderItem> updatedOrderItem = orderItemService.updateOrderItem(id, orderItemDetails);
+            if (updatedOrderItem.isPresent()) {
+                return ResponseEntity.ok(updatedOrderItem.get());
+            } else {
                 return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.ok(updatedOrderItem);
+        } catch (OrderItemUpdateException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -106,6 +127,8 @@ public class OrderItemsController {
         try {
             orderItemService.deleteOrderItem(id);
             return ResponseEntity.noContent().build();
+        } catch (OrderItemNotFoundException ex) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -114,14 +137,16 @@ public class OrderItemsController {
     @PutMapping("/{id}/{quantity}")
     public ResponseEntity<OrderItem> updateQuantity(@PathVariable int id, @PathVariable int quantity) {
         try {
-            OrderItem updatedOrderItem = orderItemService.updateQuantity(id, quantity).orElse(null);
-            if (updatedOrderItem == null) {
+            Optional<OrderItem> updatedOrderItem = orderItemService.updateQuantity(id, quantity);
+            if (updatedOrderItem.isPresent()) {
+                return ResponseEntity.ok(updatedOrderItem.get());
+            } else {
                 return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.ok(updatedOrderItem);
+        } catch (OrderItemUpdateException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 }

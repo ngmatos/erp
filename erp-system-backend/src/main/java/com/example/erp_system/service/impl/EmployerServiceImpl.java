@@ -5,6 +5,8 @@ import com.example.erp_system.model.User;
 import com.example.erp_system.repository.RoleRepository;
 import com.example.erp_system.repository.UserRepository;
 import com.example.erp_system.service.EmployerService;
+import com.example.erp_system.exception.CustomExceptions.EmployerCreationException;
+import com.example.erp_system.exception.CustomExceptions.EmployerNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,33 +34,38 @@ public class EmployerServiceImpl implements EmployerService {
 
     @Override
     public User getEmployerById(int id) {
-        Optional<User> optionalEmployer = userRepository.findById(id);
-        return optionalEmployer.orElse(null);
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EmployerNotFoundException("Employer not found with id " + id));
     }
 
     @Override
     public User createEmployer(User employer) {
-        employer.setRole(roleRepository.findByRoleName("EMPLOYER"));
-        String encodedPassword = passwordEncoder.encode(employer.getPassword());
-        employer.setPassword(encodedPassword);
-        return userRepository.save(employer);
+        try {
+            employer.setRole(roleRepository.findByRoleName("EMPLOYER"));
+            String encodedPassword = passwordEncoder.encode(employer.getPassword());
+            employer.setPassword(encodedPassword);
+            return userRepository.save(employer);
+        } catch (Exception e) {
+            throw new EmployerCreationException("Failed to create employer: " + e.getMessage());
+        }
     }
 
     @Override
     public User updateEmployer(int id, User employerDetails) {
-        Optional<User> optionalEmployer = userRepository.findById(id);
-        if (optionalEmployer.isPresent()) {
-            User existingEmployer = optionalEmployer.get();
-            existingEmployer.setName(employerDetails.getName());
-            existingEmployer.setEmail(employerDetails.getEmail());
-            existingEmployer.setAddress(employerDetails.getAddress());
-            return userRepository.save(existingEmployer);
-        }
-        return null;
+        User existingEmployer = userRepository.findById(id)
+                .orElseThrow(() -> new EmployerNotFoundException("Employer not found with id " + id));
+
+        existingEmployer.setName(employerDetails.getName());
+        existingEmployer.setEmail(employerDetails.getEmail());
+        existingEmployer.setAddress(employerDetails.getAddress());
+        return userRepository.save(existingEmployer);
     }
 
     @Override
     public void deleteEmployer(int id) {
+        if (!userRepository.existsById(id)) {
+            throw new EmployerNotFoundException("Employer not found with id " + id);
+        }
         userRepository.deleteById(id);
     }
 }

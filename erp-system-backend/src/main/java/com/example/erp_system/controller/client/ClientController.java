@@ -2,6 +2,8 @@ package com.example.erp_system.controller.client;
 
 import com.example.erp_system.model.User;
 import com.example.erp_system.service.ClientService;
+import com.example.erp_system.exception.CustomExceptions.ClientCreationException;
+import com.example.erp_system.exception.CustomExceptions.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,34 +29,44 @@ public class ClientController {
 
     @GetMapping("/{clientId}")
     public ResponseEntity<User> getClientById(@PathVariable int clientId) {
-        User client = clientService.getClientById(clientId);
-        if (client == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            User client = clientService.getClientById(clientId);
+            return ResponseEntity.ok(client);
+        } catch (ClientNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return ResponseEntity.ok(client);
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYER', 'ADMIN')")
     @PostMapping
     public ResponseEntity<User> createClient(@RequestBody User client) {
-        User createdClient = clientService.createClient(client);
-        return new ResponseEntity<>(createdClient, HttpStatus.CREATED);
+        try {
+            User createdClient = clientService.createClient(client);
+            return new ResponseEntity<>(createdClient, HttpStatus.CREATED);
+        } catch (ClientCreationException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYER', 'ADMIN')")
     @PutMapping("/{clientId}")
     public ResponseEntity<User> updateClient(@PathVariable int clientId, @RequestBody User clientDetails) {
-        User updatedClient = clientService.updateClient(clientId, clientDetails);
-        if (updatedClient == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            User updatedClient = clientService.updateClient(clientId, clientDetails);
+            return ResponseEntity.ok(updatedClient);
+        } catch (ClientNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return ResponseEntity.ok(updatedClient);
     }
 
     @PreAuthorize("hasAnyRole('EMPLOYER', 'ADMIN')")
     @DeleteMapping("/{clientId}")
     public ResponseEntity<Void> deleteClient(@PathVariable int clientId) {
-        clientService.deleteClient(clientId);
-        return ResponseEntity.noContent().build();
+        try {
+            clientService.deleteClient(clientId);
+            return ResponseEntity.noContent().build();
+        } catch (ClientNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }
