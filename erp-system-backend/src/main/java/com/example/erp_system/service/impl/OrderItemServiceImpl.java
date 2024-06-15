@@ -92,9 +92,15 @@ public class OrderItemServiceImpl implements OrderItemService {
         Optional<OrderItem> orderItem = orderItemRepository.findById(id);
         if (orderItem.isPresent()) {
             OrderItem updatedOrderItem = orderItem.get();
-            updatedOrderItem.setOrder(orderItemDetails.getOrder());
-            updatedOrderItem.setItem(orderItemDetails.getItem());
-            updatedOrderItem.setQuantity(orderItemDetails.getQuantity());
+            if(orderItemDetails.getOrder() != null && orderItemDetails.getOrder().equals(updatedOrderItem.getOrder())) {
+                updatedOrderItem.setOrder(orderItemDetails.getOrder());
+            }
+            if(orderItemDetails.getItem() != null && orderItemDetails.getItem().equals(updatedOrderItem.getItem())) {
+                updatedOrderItem.setItem(orderItemDetails.getItem());
+            }
+            if(orderItemDetails.getQuantity() != updatedOrderItem.getQuantity()) {
+                updatedOrderItem.setQuantity(orderItemDetails.getQuantity());
+            }
             return Optional.of(orderItemRepository.save(updatedOrderItem));
         } else {
             throw new OrderItemUpdateException("Item de pedido não encontrado com o ID " + id);

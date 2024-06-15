@@ -7,6 +7,7 @@ import com.example.erp_system.exception.CustomExceptions.ItemsNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,6 +52,7 @@ public class ItemsController {
         return ResponseEntity.ok(items);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @PutMapping("/stockQuantity/{itemId}/{stockQuantity}")
     public ResponseEntity<Items> updateStockQuantity(@PathVariable int itemId, @PathVariable int stockQuantity) {
         try {
@@ -61,6 +63,7 @@ public class ItemsController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @PostMapping
     public ResponseEntity<Items> createItem(@RequestBody Items itemsDetails) {
         try {
@@ -71,6 +74,7 @@ public class ItemsController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @PutMapping("/{itemId}")
     public ResponseEntity<Items> updateItem(@PathVariable int itemId, @RequestBody Items itemsDetails) {
         try {
@@ -81,6 +85,7 @@ public class ItemsController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{itemId}")
     public ResponseEntity<Void> deleteItem(@PathVariable int itemId) {
         try {

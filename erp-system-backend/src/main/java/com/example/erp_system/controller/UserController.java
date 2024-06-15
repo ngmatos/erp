@@ -30,10 +30,26 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
+    @GetMapping("/Admin")
+    public ResponseEntity<List<User>> getAllAdmins() {
+        List<User> users = userService.getAllAdmins();
+        return ResponseEntity.ok(users);
+    }
+
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable int userId) {
         try {
             User user = userService.getUserById(userId);
+            return ResponseEntity.ok(user);
+        } catch (UserNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @GetMapping("/Admin/{userId}")
+    public ResponseEntity<User> getAdminById(@PathVariable int userId) {
+        try {
+            User user = userService.getAdminById(userId);
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -89,5 +105,18 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/current")
+    public ResponseEntity<User> updateCurrentUser(@Valid @RequestBody User userDetails) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        int userId = user.getId();
+        try {
+            User updatedUser = userService.updateUser(userId, userDetails);
+            return ResponseEntity.ok(updatedUser);
+        } catch (UserNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 }

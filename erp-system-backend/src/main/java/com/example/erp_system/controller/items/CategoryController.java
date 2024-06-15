@@ -7,6 +7,7 @@ import com.example.erp_system.exception.CustomExceptions.CategoryCreationExcepti
 import com.example.erp_system.exception.CustomExceptions.CategoryNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,6 +48,7 @@ public class CategoryController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @PostMapping
     public ResponseEntity<Category> createCategory(@RequestBody Category categoryDetails) {
         try {
@@ -57,6 +59,7 @@ public class CategoryController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @PutMapping("/{categoryId}")
     public ResponseEntity<Category> updateCategory(@PathVariable int categoryId, @RequestBody Category categoryDetails) {
         try {
@@ -68,6 +71,7 @@ public class CategoryController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<Void> deleteCategory(@PathVariable int categoryId) {
         try {

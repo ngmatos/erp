@@ -67,9 +67,15 @@ public class ItemsServiceImpl implements ItemsService {
         Items item = itemsRepository.findById(id)
                 .orElseThrow(() -> new ItemsNotFoundException("Item not found with id " + id));
 
-        item.setItemName(itemDetails.getItemName());
-        item.setCategory(itemDetails.getCategory());
-        item.setStockQuantity(itemDetails.getStockQuantity());
+        if(itemDetails.getItemName() != null && !itemDetails.getItemName().equals(item.getItemName())) {
+            item.setItemName(itemDetails.getItemName());
+        }
+        if(itemDetails.getCategory() != null && !itemDetails.getCategory().equals(item.getCategory())) {
+            item.setCategory(itemDetails.getCategory());
+        }
+        if(itemDetails.getStockQuantity() != item.getStockQuantity()) {
+            item.setStockQuantity(itemDetails.getStockQuantity());
+        }
         return itemsRepository.save(item);
     }
 
@@ -86,7 +92,12 @@ public class ItemsServiceImpl implements ItemsService {
         Items item = itemsRepository.findById(id)
                 .orElseThrow(() -> new ItemsNotFoundException("Item not found with id " + id));
 
-        item.setStockQuantity(stockQuantity);
+        if(stockQuantity < 0) {
+            throw new IllegalArgumentException("Stock quantity cannot be negative");
+        }
+        if (stockQuantity == item.getStockQuantity()) {
+            return item;
+        }
         return itemsRepository.save(item);
     }
 }

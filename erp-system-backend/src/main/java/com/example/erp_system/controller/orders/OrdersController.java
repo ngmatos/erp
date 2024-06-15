@@ -8,6 +8,7 @@ import com.example.erp_system.exception.CustomExceptions.OrderUpdateException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -88,6 +89,7 @@ public class OrdersController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order orderDetails) {
         try {
@@ -98,6 +100,7 @@ public class OrdersController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @PutMapping("/{orderId}")
     public ResponseEntity<Order> updateOrder(@PathVariable int orderId, @RequestBody Order orderDetails) {
         try {
@@ -108,6 +111,7 @@ public class OrdersController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @DeleteMapping("/{orderId}")
     public ResponseEntity<Void> deleteOrder(@PathVariable int orderId) {
         try {
@@ -118,6 +122,7 @@ public class OrdersController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @PutMapping("/{orderId}/{status}")
     public ResponseEntity<Order> updateStatus(@PathVariable int orderId, @PathVariable String status) {
         try {

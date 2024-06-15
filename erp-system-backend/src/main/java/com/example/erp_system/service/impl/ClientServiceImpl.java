@@ -33,8 +33,14 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public User getClientById(int id) {
-        return userRepository.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new ClientNotFoundException("Client not found with id " + id));
+
+        if (!"CLIENT".equals(user.getRole().getRoleName())) {
+            throw new ClientNotFoundException("User with id " + id + " is not a client");
+        }
+
+        return user;
     }
 
     @Override
@@ -56,9 +62,15 @@ public class ClientServiceImpl implements ClientService {
         User existingClient = userRepository.findById(id)
                 .orElseThrow(() -> new ClientNotFoundException("Client not found with id " + id));
 
-        existingClient.setName(clientDetails.getName());
-        existingClient.setEmail(clientDetails.getEmail());
-        existingClient.setAddress(clientDetails.getAddress());
+        if (clientDetails.getName() != null && !clientDetails.getName().equals(existingClient.getName())) {
+            existingClient.setName(clientDetails.getName());
+        }
+        if (clientDetails.getEmail() != null && !clientDetails.getEmail().equals(existingClient.getEmail())) {
+            existingClient.setEmail(clientDetails.getEmail());
+        }
+        if (clientDetails.getAddress() != null && !clientDetails.getAddress().equals(existingClient.getAddress())) {
+            existingClient.setAddress(clientDetails.getAddress());
+        }
         return userRepository.save(existingClient);
     }
 

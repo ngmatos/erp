@@ -7,6 +7,7 @@ import com.example.erp_system.exception.CustomExceptions.OrderStatusNotFoundExce
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,6 +46,7 @@ public class OrdersStatusController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
     public ResponseEntity<OrderStatus> createOrderStatus(@RequestBody OrderStatus orderStatusDetails) {
         try {
@@ -55,6 +57,7 @@ public class OrdersStatusController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{orderStatusId}")
     public ResponseEntity<OrderStatus> updateOrderStatus(@PathVariable int orderStatusId, @RequestBody OrderStatus orderStatusDetails) {
         try {
@@ -65,6 +68,7 @@ public class OrdersStatusController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{orderStatusId}")
     public ResponseEntity<Void> deleteOrderStatus(@PathVariable int orderStatusId) {
         try {

@@ -32,9 +32,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getAllAdmins() {
+        Role role = roleRepository.findByRoleName("ADMIN");
+        return userRepository.findAllByRoleId(role.getId());
+    }
+
+    @Override
     public User getUserById(int id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
+    }
+
+    @Override
+    public User getAdminById(int id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
+
+        if (!"ADMIN".equals(user.getRole().getRoleName())) {
+            throw new UserNotFoundException("User with id " + id + " is not an admin");
+        }
+
+        return user;
     }
 
     @Override
@@ -54,9 +72,19 @@ public class UserServiceImpl implements UserService {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
 
-        existingUser.setName(userDetails.getName());
-        existingUser.setEmail(userDetails.getEmail());
-        existingUser.setAddress(userDetails.getAddress());
+        if(userDetails.getPassword() != null && !userDetails.getPassword().equals(existingUser.getPassword())) {
+            String encodedPassword = passwordEncoder.encode(userDetails.getPassword());
+            existingUser.setPassword(encodedPassword);
+        }
+        if(userDetails.getName() != null && !userDetails.getName().equals(existingUser.getName())) {
+            existingUser.setName(userDetails.getName());
+        }
+        if(userDetails.getEmail() != null && !userDetails.getEmail().equals(existingUser.getEmail())) {
+            existingUser.setEmail(userDetails.getEmail());
+        }
+        if(userDetails.getAddress() != null && !userDetails.getAddress().equals(existingUser.getAddress())) {
+            existingUser.setAddress(userDetails.getAddress());
+        }
         return userRepository.save(existingUser);
     }
 

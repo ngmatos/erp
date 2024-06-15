@@ -46,7 +46,9 @@ public class OrderStatusServiceImpl implements OrderStatusService {
         Optional<OrderStatus> orderStatus = orderStatusRepository.findById(id);
         if (orderStatus.isPresent()) {
             OrderStatus updatedOrderStatus = orderStatus.get();
-            updatedOrderStatus.setStatus(orderStatusDetails.getStatus());
+            if(orderStatusDetails.getStatus() != null && !orderStatusDetails.getStatus().equals(updatedOrderStatus.getStatus())){
+                updatedOrderStatus.setStatus(orderStatusDetails.getStatus());
+            }
             return Optional.of(orderStatusRepository.save(updatedOrderStatus));
         }
         return Optional.empty();

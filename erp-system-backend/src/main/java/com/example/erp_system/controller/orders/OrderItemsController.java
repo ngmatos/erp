@@ -8,6 +8,7 @@ import com.example.erp_system.exception.CustomExceptions.OrderItemUpdateExceptio
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -94,6 +95,7 @@ public class OrderItemsController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @PostMapping
     public ResponseEntity<OrderItem> createOrderItem(@RequestBody OrderItem orderItem) {
         try {
@@ -106,6 +108,7 @@ public class OrderItemsController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @PutMapping("/{id}")
     public ResponseEntity<OrderItem> updateOrderItem(@PathVariable int id, @RequestBody OrderItem orderItemDetails) {
         try {
@@ -122,6 +125,7 @@ public class OrderItemsController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrderItem(@PathVariable int id) {
         try {
@@ -134,6 +138,7 @@ public class OrderItemsController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @PutMapping("/{id}/{quantity}")
     public ResponseEntity<OrderItem> updateQuantity(@PathVariable int id, @PathVariable int quantity) {
         try {

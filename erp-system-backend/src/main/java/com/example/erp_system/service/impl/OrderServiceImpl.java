@@ -105,9 +105,15 @@ public class OrderServiceImpl implements OrderService {
         Optional<Order> optionalOrder = orderRepository.findById(id);
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
-            order.setOrderStatus(orderDetails.getOrderStatus());
-            order.setDateOrdered(orderDetails.getDateOrdered());
-            order.setCustomer(orderDetails.getCustomer());
+            if(orderDetails.getOrderStatus() != null && !orderDetails.getOrderStatus().equals(order.getOrderStatus())) {
+                order.setOrderStatus(orderDetails.getOrderStatus());
+            }
+            if(orderDetails.getDateOrdered() != null && !orderDetails.getDateOrdered().equals(order.getDateOrdered())) {
+                order.setDateOrdered(orderDetails.getDateOrdered());
+            }
+            if(orderDetails.getCustomer() != null && !orderDetails.getCustomer().equals(order.getCustomer())) {
+                order.setCustomer(orderDetails.getCustomer());
+            }
             return orderRepository.save(order);
         } else {
             throw new OrderUpdateException("Order not found with id " + id);

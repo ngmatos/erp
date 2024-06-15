@@ -34,8 +34,14 @@ public class EmployerServiceImpl implements EmployerService {
 
     @Override
     public User getEmployerById(int id) {
-        return userRepository.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new EmployerNotFoundException("Employer not found with id " + id));
+
+        if (!"EMPLOYER".equals(user.getRole().getRoleName())) {
+            throw new EmployerNotFoundException("User with id " + id + " is not an employer");
+        }
+
+        return user;
     }
 
     @Override
@@ -55,9 +61,17 @@ public class EmployerServiceImpl implements EmployerService {
         User existingEmployer = userRepository.findById(id)
                 .orElseThrow(() -> new EmployerNotFoundException("Employer not found with id " + id));
 
-        existingEmployer.setName(employerDetails.getName());
-        existingEmployer.setEmail(employerDetails.getEmail());
-        existingEmployer.setAddress(employerDetails.getAddress());
+        if (employerDetails.getName() != null && !employerDetails.getName().equals(existingEmployer.getName())) {
+            existingEmployer.setName(employerDetails.getName());
+        }
+
+        if (employerDetails.getEmail() != null && !employerDetails.getEmail().equals(existingEmployer.getEmail())) {
+            existingEmployer.setEmail(employerDetails.getEmail());
+        }
+
+        if (employerDetails.getAddress() != null && !employerDetails.getAddress().equals(existingEmployer.getAddress())) {
+            existingEmployer.setAddress(employerDetails.getAddress());
+        }
         return userRepository.save(existingEmployer);
     }
 
