@@ -1,13 +1,14 @@
+// src/pages/HomePage.js
 import React from 'react';
 
-const HomePage = () => {
-    return (
-        <div>
-            <h1>Welcome to Your ERP System</h1>
-            <p>Here you can manage all aspects of your business.</p>
-            {/* Add links to other sections/pages of your ERP */}
-        </div>
-    );
-}
+const HomePage = () => (
+    <div>
+        <h1>Home Page</h1>
+        <p>Welcome to the ERP System!</p>
+        {/*verifica ficheiros em localStorage e seus valores*/}
+        <p>localStorage.getItem('token'): {localStorage.getItem('token')}</p>
+        <p>localStorage.getItem('isAuthenticated'): {localStorage.getItem('isAuthenticated')}</p>
+    </div>
+);
 
 export default HomePage;

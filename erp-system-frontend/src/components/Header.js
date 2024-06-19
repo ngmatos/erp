@@ -1,17 +1,20 @@
 import React from 'react';
+import logo from '../logo.svg';
 import { Link } from 'react-router-dom';
 
 const Header = () => {
     return (
-        <header>
+        <header className="App-header">
+            <img src={logo} className="App-logo" alt="React Logo" />
+            <h1 className="App-title">
+                <Link className="App-title" to="/">ERP</Link>
+            </h1>
             <nav>
-                <ul>
-                    <li><Link to="/">Home</Link></li>
-                    <li><Link to="/employees">Employees</Link></li>
-                    <li><Link to="/clients">Clients</Link></li>
-                    <li><Link to="/stock">Stock</Link></li>
-                    <li><Link to="/sales">Sales</Link></li>
-                    {/* Add more links as needed */}
+                <ul className="nav">
+                    <li className="nav-item">
+                    <Link className="nav-link" to="/">Home</Link>
+                    </li>
+                    {/* Adicione mais links aqui conforme necessário */}
                 </ul>
             </nav>
         </header>
