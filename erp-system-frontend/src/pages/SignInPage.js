@@ -1,13 +1,13 @@
 // src/pages/SignInPage.js
 import React from 'react';
 import { Link } from 'react-router-dom';
-import SignIn from '../components/auth/SignIn';
+import Login from "../components/auth/login.component";
 
 function SignInPage() {
     return (
         <div>
             <h1>Sign In Page</h1>
-            <SignIn />
+            <Login />
             <Link to="/">Back to Choice Page</Link>
         </div>
     );

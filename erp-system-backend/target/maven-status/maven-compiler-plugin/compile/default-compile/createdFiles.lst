@@ -31,7 +31,6 @@ com/example/erp_system/model/Role.class
 com/example/erp_system/dtos/request/SignUpRequest.class
 com/example/erp_system/controller/client/ClientController.class
 com/example/erp_system/repository/RoleRepository.class
-com/example/erp_system/config/CorsConfig$1.class
 com/example/erp_system/model/Order$OrderBuilder.class
 com/example/erp_system/service/JwtService.class
 com/example/erp_system/dtos/request/SignUpRequest$SignUpRequestBuilder.class

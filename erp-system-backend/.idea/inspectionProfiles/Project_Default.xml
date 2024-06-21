@@ -12,6 +12,7 @@
           <option value="erp-system-backend" />
           <option value="erp-system-backend" />
           <option value="erp-system-backend" />
+          <option value="erp-system-backend" />
         </list>
       </option>
       <option name="ignoredPackages">
@@ -23,10 +24,12 @@
           <option value="org.apache.tomcat.embed:tomcat-embed-core:10.1.8" />
           <option value="ch.qos.logback:logback-core:1.4.7" />
           <option value="org.springframework.boot:spring-boot:3.1.0" />
+          <option value="org.springframework.security:spring-security-core:6.1.0" />
         </list>
       </option>
       <option name="ignoredReasons">
         <list>
+          <option value="Not exploitable" />
           <option value="Not exploitable" />
           <option value="Not exploitable" />
           <option value="Not exploitable" />

@@ -6,7 +6,7 @@ INSERT INTO role (role_name) VALUES ('EMPLOYER');
 INSERT INTO role (role_name) VALUES ('CLIENT');
 
 -- Inserção de alguns usuários
-INSERT INTO user (name, email, address, password, role_id) VALUES ('Admin', 'admin@example.com', 'Admin Address', '1234', 2); -- ADMIN
+INSERT INTO user (name, email, address, password, role_id) VALUES ('Admin', 'admin@example.com', 'Admin Address', '12345678', 2); -- ADMIN
 INSERT INTO user (name, email, address, password, role_id) VALUES ('Employee 1', 'employee1@example.com', 'Employee 1 Address', 'senha_emp1', 3); -- EMPLOYEE
 INSERT INTO user (name, email, address, password, role_id) VALUES ('Employee 2', 'employee2@example.com', 'Employee 2 Address', 'senha_emp2', 3); -- EMPLOYEE
 INSERT INTO user (name, email, address, password, role_id) VALUES ('Customer 1', 'customer1@example.com', 'Customer 1 Address', 'senha_cus1', 4); -- CUSTOMER

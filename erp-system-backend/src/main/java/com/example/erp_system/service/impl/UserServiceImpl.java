@@ -97,11 +97,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateRoleUser(int id, User userDetails) {
+    public User updateRoleUser(int id, String role) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
 
-        existingUser.setRole(userDetails.getRole());
+        if(roleRepository.findByRoleName(role) != null && roleRepository.findByRoleName(role).getId() != existingUser.getRole().getId()) {
+            existingUser.setRole(roleRepository.findByRoleName(role));
+        }
         return userRepository.save(existingUser);
     }
 }

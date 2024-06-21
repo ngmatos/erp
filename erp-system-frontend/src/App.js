@@ -1,48 +1,63 @@
-// src/App.js
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-import './App.css';
+import React, { Component } from "react";
+import { Routes, Route, Link, Navigate } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
+
+import AuthService from "./services/auth.service";
+
+import Login from "./components/auth/login.component";
+import Register from "./components/auth/register.component";
+import HomePage from "./pages/HomePage";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import ChoicePage from './pages/ChoicePage';
-import SignUpPage from './pages/SignUpPage';
-import SignInPage from './pages/SignInPage';
-import HomePage from './pages/HomePage';
-import { AuthProvider, useAuth } from './context/AuthContext'; // Importa o contexto de autenticação
+import Profile from "./components/auth/profile.component";
+import UsersPage from "./pages/UsersPage";
 
-function App() {
-    return (
-        <AuthProvider>
-            <Router>
+import EventBus from "./common/EventBus";
+
+class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            currentUser: AuthService.getCurrentUser(),
+        };
+    }
+
+    componentDidMount() {
+        EventBus.on("logout", this.logOut);
+    }
+
+    componentWillUnmount() {
+        EventBus.remove("logout", this.logOut);
+    }
+
+    logOut = () => {
+        AuthService.logout();
+        this.setState({
+            currentUser: null,
+        });
+    };
+
+    render() {
+        return (
+            <div>
                 <Header />
-                <Switch>
-                    <Route exact path="/" component={ChoicePage} /> {/* Página de escolha acessível a todos */}
-                    <Route path="/signup" component={SignUpPage} /> {/* Página de registro acessível a todos */}
-                    <Route path="/signin" component={SignInPage} /> {/* Página de login acessível a todos */}
-                    <PrivateRoute path="/homepage" component={HomePage} /> {/* Página inicial acessível apenas para autenticados */}
-                    <Redirect to="/" /> {/* Redireciona URLs desconhecidas para a página de escolha */}
-                </Switch>
+                <div className="container mt-3">
+                    <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/home" element={<HomePage />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/profile" element={<Profile />} />
+                        <Route path="/users" element={<UsersPage />} />
+                        {/*Rest*/}
+                        <Route path="*" element={<Navigate to="/" />} />
+                    </Routes>
+                </div>
                 <Footer />
-            </Router>
-        </AuthProvider>
-    );
-}
-
-function PrivateRoute({ component: Component, ...rest }) {
-    const { state } = useAuth();
-
-    return (
-        <Route
-            {...rest}
-            render={(props) =>
-                state.isAuthenticated ? (
-                    <Component {...props} />
-                ) : (
-                    <Redirect to="/" />
-                )
-            }
-        />
-    );
+            </div>
+        );
+    }
 }
 
 export default App;

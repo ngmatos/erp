@@ -1,24 +1,106 @@
-import React from 'react';
-import logo from '../logo.svg';
-import { Link } from 'react-router-dom';
+// src/components/Header.js
 
-const Header = () => {
-    return (
-        <header className="App-header">
-            <img src={logo} className="App-logo" alt="React Logo" />
-            <h1 className="App-title">
-                <Link className="App-title" to="/">ERP</Link>
-            </h1>
-            <nav>
-                <ul className="nav">
+import React from "react";
+import { Link } from "react-router-dom";
+import AuthService from "../services/auth.service";
+import EventBus from "../common/EventBus";
+
+class Header extends React.Component {
+    constructor(props) {
+        super(props);
+        this.logOut = this.logOut.bind(this);
+        this.state = {
+            currentUser: AuthService.getCurrentUser(),
+        };
+    }
+
+    componentDidMount() {
+        EventBus.on("logout", this.logOut);
+    }
+
+    componentWillUnmount() {
+        EventBus.remove("logout", this.logOut);
+    }
+
+    logOut() {
+        AuthService.logout();
+        this.setState({
+            currentUser: null,
+        });
+    }
+
+    render() {
+        const { currentUser } = this.state;
+
+        return (
+            <nav className="navbar navbar-expand navbar-dark bg-dark">
+                <Link to="/" className="navbar-brand">
+                    ERP SYSTEM
+                </Link>
+                <ul className="navbar-nav mr-auto">
                     <li className="nav-item">
-                    <Link className="nav-link" to="/">Home</Link>
+                        <Link to="/home" className="nav-link">
+                            Home
+                        </Link>
                     </li>
-                    {/* Adicione mais links aqui conforme necessário */}
+
+                    {currentUser && (
+                        <>
+                            {currentUser.user.authorities.some(auth => auth.authority === "ROLE_EMPLOYER") && (
+                                <li className="nav-item">
+                                    <Link to="/mod" className="nav-link">
+                                        Employer Board
+                                    </Link>
+                                </li>
+                            )}
+                            {currentUser.user.authorities.some(auth => auth.authority === "ROLE_ADMIN") && (
+                                <li className="nav-item">
+                                    <Link to="/users" className="nav-link">
+                                        Users
+                                    </Link>
+                                </li>
+                            )}
+                            <li className="nav-item">
+                                <Link to="/user" className="nav-link">
+                                    User
+                                </Link>
+                            </li>
+                        </>
+                    )}
                 </ul>
+
+                <div className="navbar-nav ml-auto">
+                    {currentUser ? (
+                        <>
+                            <li className="nav-item">
+                                <Link to="/profile" className="nav-link">
+                                    {currentUser.user.username}
+                                </Link>
+                            </li>
+                            <li className="nav-item">
+                                <a href="/login" className="nav-link" onClick={this.logOut}>
+                                    LogOut
+                                </a>
+                            </li>
+                        </>
+                    ) : (
+                        <>
+                            <li className="nav-item">
+                                <Link to="/login" className="nav-link">
+                                    Login
+                                </Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/register" className="nav-link">
+                                    Sign Up
+                                </Link>
+                            </li>
+                        </>
+                    )}
+                </div>
             </nav>
-        </header>
-    );
+        );
+    }
 }
 
 export default Header;

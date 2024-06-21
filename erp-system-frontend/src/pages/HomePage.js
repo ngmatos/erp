@@ -1,13 +1,12 @@
 // src/pages/HomePage.js
 import React from 'react';
+import Home from "../components/home.component";
 
 const HomePage = () => (
-    <div>
+    <div className="users-page">
         <h1>Home Page</h1>
         <p>Welcome to the ERP System!</p>
-        {/*verifica ficheiros em localStorage e seus valores*/}
-        <p>localStorage.getItem('token'): {localStorage.getItem('token')}</p>
-        <p>localStorage.getItem('isAuthenticated'): {localStorage.getItem('isAuthenticated')}</p>
+        <Home />
     </div>
 );
 

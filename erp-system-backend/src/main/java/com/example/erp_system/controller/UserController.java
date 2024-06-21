@@ -1,5 +1,6 @@
 package com.example.erp_system.controller;
 
+import com.example.erp_system.model.Role;
 import com.example.erp_system.model.User;
 import com.example.erp_system.service.UserService;
 import com.example.erp_system.exception.CustomExceptions.UserNotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -56,7 +58,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         try {
@@ -67,7 +69,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{userId}")
     public ResponseEntity<User> updateUser(@PathVariable int userId, @Valid @RequestBody User userDetails) {
         try {
@@ -78,7 +80,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable int userId) {
         try {
@@ -90,10 +92,10 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @PutMapping("/{userId}/role")
-    public ResponseEntity<User> updateRoleUser(@PathVariable int userId, @Valid @RequestBody User userDetails) {
+    @PutMapping("/{userId}/{role}")
+    public ResponseEntity<User> updateRoleUser(@PathVariable int userId, @PathVariable String role) {
         try {
-            User updatedUser = userService.updateRoleUser(userId, userDetails);
+            User updatedUser = userService.updateRoleUser(userId, role);
             return ResponseEntity.ok(updatedUser);
         } catch (UserNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

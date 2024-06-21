@@ -1,4 +1,4 @@
-FROM openjdk:21-slim
+FROM openjdk:17-slim
 
 # Instalar o cliente MySQL
 RUN apt-get update && apt-get install -y default-mysql-client && apt-get clean
