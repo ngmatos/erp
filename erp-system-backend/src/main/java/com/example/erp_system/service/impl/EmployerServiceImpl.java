@@ -63,15 +63,29 @@ public class EmployerServiceImpl implements EmployerService {
 
         if (employerDetails.getName() != null && !employerDetails.getName().equals(existingEmployer.getName())) {
             existingEmployer.setName(employerDetails.getName());
+        } else {
+            existingEmployer.setName(existingEmployer.getName());
         }
 
         if (employerDetails.getEmail() != null && !employerDetails.getEmail().equals(existingEmployer.getEmail())) {
             existingEmployer.setEmail(employerDetails.getEmail());
+        } else{
+            existingEmployer.setEmail(existingEmployer.getEmail());
         }
 
         if (employerDetails.getAddress() != null && !employerDetails.getAddress().equals(existingEmployer.getAddress())) {
             existingEmployer.setAddress(employerDetails.getAddress());
+        } else{
+            existingEmployer.setAddress(existingEmployer.getAddress());
         }
+
+        if (employerDetails.getPassword() != null && !employerDetails.getPassword().equals(existingEmployer.getPassword())) {
+            String encodedPassword = passwordEncoder.encode(employerDetails.getPassword());
+            existingEmployer.setPassword(encodedPassword);
+        } else{
+            existingEmployer.setPassword(existingEmployer.getPassword());
+        }
+
         return userRepository.save(existingEmployer);
     }
 

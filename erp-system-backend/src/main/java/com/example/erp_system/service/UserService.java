@@ -16,4 +16,5 @@ public interface UserService {
     User updateUser(int id, User userDetails);
     void deleteUser(int id);
     User updateRoleUser(int id, String role);
+    User updatePassword(int id, String password, String oldPassword);
 }

@@ -80,13 +80,18 @@ class AllUsersService {
 
     // Admin Role
     deleteUser(id) {
-        return axios.delete(API_URL + '/' +id, { headers: authHeader() })
+        return axios.delete(API_URL + '/' + id, { headers: authHeader() })
             .then(response => {
                 console.log('Response:', response.data);
                 return response.data;
             })
             .catch(error => {
-                console.error(`Error deleting user with ID ${id}:`, error);
+                if (error.response && error.response.status === 400) {
+                    console.error('Erro ao remover usuário:', error.response.data);
+                    alert('Não é possível remover o usuário devido a dependências.');
+                } else {
+                    console.error('Erro ao remover usuário:', error);
+                }
                 throw error;
             });
     }
@@ -124,6 +129,18 @@ class AllUsersService {
             })
             .catch(error => {
                 console.error('Error editing current user:', error);
+                throw error;
+            });
+    }
+
+    editCurrentPassword(data) {
+        return axios.put(API_URL + '/current/password', data, { headers: authHeader() })
+            .then(response => {
+                console.log('Response:', response.data);
+                return response.data;
+            })
+            .catch(error => {
+                console.error('Error editing current password:', error);
                 throw error;
             });
     }

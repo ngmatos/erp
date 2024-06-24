@@ -94,12 +94,18 @@ public class OrderItemServiceImpl implements OrderItemService {
             OrderItem updatedOrderItem = orderItem.get();
             if(orderItemDetails.getOrder() != null && orderItemDetails.getOrder().equals(updatedOrderItem.getOrder())) {
                 updatedOrderItem.setOrder(orderItemDetails.getOrder());
+            } else{
+                updatedOrderItem.setOrder(updatedOrderItem.getOrder());
             }
             if(orderItemDetails.getItem() != null && orderItemDetails.getItem().equals(updatedOrderItem.getItem())) {
                 updatedOrderItem.setItem(orderItemDetails.getItem());
+            } else {
+                updatedOrderItem.setItem(updatedOrderItem.getItem());
             }
             if(orderItemDetails.getQuantity() != updatedOrderItem.getQuantity()) {
                 updatedOrderItem.setQuantity(orderItemDetails.getQuantity());
+            } else{
+                updatedOrderItem.setQuantity(updatedOrderItem.getQuantity());
             }
             return Optional.of(orderItemRepository.save(updatedOrderItem));
         } else {

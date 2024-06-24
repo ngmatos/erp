@@ -69,13 +69,16 @@ public class ItemsServiceImpl implements ItemsService {
 
         if(itemDetails.getItemName() != null && !itemDetails.getItemName().equals(item.getItemName())) {
             item.setItemName(itemDetails.getItemName());
-        }
+        } else{ item.setItemName(item.getItemName()); }
+
         if(itemDetails.getCategory() != null && !itemDetails.getCategory().equals(item.getCategory())) {
             item.setCategory(itemDetails.getCategory());
-        }
+        } else{ item.setCategory(item.getCategory()); }
+
         if(itemDetails.getStockQuantity() != item.getStockQuantity()) {
             item.setStockQuantity(itemDetails.getStockQuantity());
-        }
+        } else{ item.setStockQuantity(item.getStockQuantity()); }
+        
         return itemsRepository.save(item);
     }
 

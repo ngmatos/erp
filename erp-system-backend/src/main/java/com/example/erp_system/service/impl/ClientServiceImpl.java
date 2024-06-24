@@ -64,13 +64,29 @@ public class ClientServiceImpl implements ClientService {
 
         if (clientDetails.getName() != null && !clientDetails.getName().equals(existingClient.getName())) {
             existingClient.setName(clientDetails.getName());
+        } else {
+            existingClient.setName(existingClient.getName());
         }
+
         if (clientDetails.getEmail() != null && !clientDetails.getEmail().equals(existingClient.getEmail())) {
             existingClient.setEmail(clientDetails.getEmail());
+        } else{
+            existingClient.setEmail(existingClient.getEmail());
         }
+
         if (clientDetails.getAddress() != null && !clientDetails.getAddress().equals(existingClient.getAddress())) {
             existingClient.setAddress(clientDetails.getAddress());
+        } else {
+            existingClient.setAddress(existingClient.getAddress());
         }
+
+        if (clientDetails.getPassword() != null && !clientDetails.getPassword().equals(existingClient.getPassword())) {
+            String encodedPassword = passwordEncoder.encode(clientDetails.getPassword());
+            existingClient.setPassword(encodedPassword);
+        } else {
+            existingClient.setPassword(existingClient.getPassword());
+        }
+
         return userRepository.save(existingClient);
     }
 

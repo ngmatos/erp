@@ -1,5 +1,3 @@
-// src/components/Header.js
-
 import React from "react";
 import { Link } from "react-router-dom";
 import AuthService from "../services/auth.service";
@@ -8,7 +6,6 @@ import EventBus from "../common/EventBus";
 class Header extends React.Component {
     constructor(props) {
         super(props);
-        this.logOut = this.logOut.bind(this);
         this.state = {
             currentUser: AuthService.getCurrentUser(),
         };
@@ -22,12 +19,10 @@ class Header extends React.Component {
         EventBus.remove("logout", this.logOut);
     }
 
-    logOut() {
+    logOut = () => {
         AuthService.logout();
-        this.setState({
-            currentUser: null,
-        });
-    }
+        this.setState({ currentUser: null });
+    };
 
     render() {
         const { currentUser } = this.state;
@@ -46,13 +41,38 @@ class Header extends React.Component {
 
                     {currentUser && (
                         <>
+
+                            {/* Role Employer */}
                             {currentUser.user.authorities.some(auth => auth.authority === "ROLE_EMPLOYER") && (
                                 <li className="nav-item">
-                                    <Link to="/mod" className="nav-link">
-                                        Employer Board
+                                    <Link to="/clients" className="nav-link">
+                                        Clients
                                     </Link>
                                 </li>
                             )}
+                            {currentUser.user.authorities.some(auth => auth.authority === "ROLE_EMPLOYER") && (
+                                <li className="nav-item">
+                                    <Link to="/employers" className="nav-link">
+                                        Employers
+                                    </Link>
+                                </li>
+                            )}
+                            {currentUser.user.authorities.some(auth => auth.authority === "ROLE_EMPLOYER") && (
+                                <li className="nav-item">
+                                    <Link to="/orders" className="nav-link">
+                                        Orders
+                                    </Link>
+                                </li>
+                            )}
+                            {currentUser.user.authorities.some(auth => auth.authority === "ROLE_EMPLOYER") && (
+                                <li className="nav-item">
+                                    <Link to="/products" className="nav-link">
+                                        Products
+                                    </Link>
+                                </li>
+                            )}
+
+                            {/* Role Admin */}
                             {currentUser.user.authorities.some(auth => auth.authority === "ROLE_ADMIN") && (
                                 <li className="nav-item">
                                     <Link to="/users" className="nav-link">
@@ -60,11 +80,34 @@ class Header extends React.Component {
                                     </Link>
                                 </li>
                             )}
-                            <li className="nav-item">
-                                <Link to="/user" className="nav-link">
-                                    User
-                                </Link>
-                            </li>
+                            {currentUser.user.authorities.some(auth => auth.authority === "ROLE_ADMIN") && (
+                                <li className="nav-item">
+                                    <Link to="/clients" className="nav-link">
+                                        Clients
+                                    </Link>
+                                </li>
+                            )}
+                            {currentUser.user.authorities.some(auth => auth.authority === "ROLE_ADMIN") && (
+                                <li className="nav-item">
+                                    <Link to="/employers" className="nav-link">
+                                        Employers
+                                    </Link>
+                                </li>
+                            )}
+                            {currentUser.user.authorities.some(auth => auth.authority === "ROLE_ADMIN") && (
+                                <li className="nav-item">
+                                    <Link to="/orders" className="nav-link">
+                                        Orders
+                                    </Link>
+                                </li>
+                            )}
+                            {currentUser.user.authorities.some(auth => auth.authority === "ROLE_ADMIN") && (
+                                <li className="nav-item">
+                                    <Link to="/products" className="nav-link">
+                                        Products
+                                    </Link>
+                                </li>
+                            )}
                         </>
                     )}
                 </ul>
@@ -72,7 +115,7 @@ class Header extends React.Component {
                 <div className="navbar-nav ml-auto">
                     {currentUser ? (
                         <>
-                            <li className="nav-item">
+                        <li className="nav-item">
                                 <Link to="/profile" className="nav-link">
                                     {currentUser.user.username}
                                 </Link>

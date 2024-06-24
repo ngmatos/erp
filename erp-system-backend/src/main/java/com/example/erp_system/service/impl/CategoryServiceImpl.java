@@ -48,7 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         if(categoryDetails.getCategoryName() != null && !categoryDetails.getCategoryName().equals(category.getCategoryName())){
             category.setCategoryName(categoryDetails.getCategoryName());
-        }
+        } else { category.setCategoryName(category.getCategoryName()); }
         return Optional.of(categoryRepository.save(category));
     }
 

@@ -12,6 +12,10 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Profile from "./components/auth/profile.component";
 import UsersPage from "./pages/UsersPage";
+import ClientsPage from "./pages/ClientsPage";
+import EmployersPage from "./pages/EmployersPage";
+import OrdersPage from "./pages/OrdersPage";
+import ProductsPage from "./pages/ProductsPage";
 
 import EventBus from "./common/EventBus";
 
@@ -50,6 +54,10 @@ class App extends Component {
                         <Route path="/register" element={<Register />} />
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/users" element={<UsersPage />} />
+                        <Route path="/clients" element={<ClientsPage />} />
+                        <Route path="/employers" element={<EmployersPage />} />
+                        <Route path="/orders" element={<OrdersPage />} />
+                        <Route path="/products" element={<ProductsPage />} />
                         {/*Rest*/}
                         <Route path="*" element={<Navigate to="/" />} />
                     </Routes>

@@ -107,13 +107,13 @@ public class OrderServiceImpl implements OrderService {
             Order order = optionalOrder.get();
             if(orderDetails.getOrderStatus() != null && !orderDetails.getOrderStatus().equals(order.getOrderStatus())) {
                 order.setOrderStatus(orderDetails.getOrderStatus());
-            }
+            } else { order.setOrderStatus(order.getOrderStatus()); }
             if(orderDetails.getDateOrdered() != null && !orderDetails.getDateOrdered().equals(order.getDateOrdered())) {
                 order.setDateOrdered(orderDetails.getDateOrdered());
-            }
+            } else { order.setDateOrdered(order.getDateOrdered()); }
             if(orderDetails.getCustomer() != null && !orderDetails.getCustomer().equals(order.getCustomer())) {
                 order.setCustomer(orderDetails.getCustomer());
-            }
+            } else { order.setCustomer(order.getCustomer()); }
             return orderRepository.save(order);
         } else {
             throw new OrderUpdateException("Order not found with id " + id);

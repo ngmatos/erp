@@ -3,6 +3,7 @@ html, body, #root {
   margin: 0;
   padding: 0;
   height: 100%;
+  box-sizing: border-box;
 }
 
 body {
@@ -16,11 +17,12 @@ a {
   color: #007acc;
   text-decoration: none;
   font-weight: bold;
+  cursor: pointer;
 }
 
 a:hover {
   text-decoration: underline;
-    color: #003366;
+  color: #003366;
 }
 
 /* Estilos para todos os headers (cabeçalhos) */
@@ -29,22 +31,21 @@ h1, h2, h3, h4, h5, h6 {
   color: #003366;
 }
 
-/* Estilos para o cabeçalho da aplicação */
+/* Estilos Header */
 .App-header {
   background-color: #003366;
   color: white;
+  position: fixed;
+  top: 0;
   padding: 20px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
 }
 
-/* Estilos para o logo da aplicação */
 .App-header img {
-  max-height: 40px; /* Tamanho máximo ajustável do logo */
+  max-height: 40px;
 }
 
-/* Estilos para a lista de navegação */
 .App-header ul {
   list-style-type: none;
   display: flex;
@@ -53,11 +54,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .App-header li {
-  margin-right: 15px; /* Espaçamento entre os itens da lista */
+  margin-right: 15px;
 }
 
 .App-header li:last-child {
-  margin-right: 0; /* Remove a margem à direita do último item */
+  margin-right: 0;
 }
 
 .App-header a {
@@ -71,12 +72,23 @@ h1, h2, h3, h4, h5, h6 {
   color: brown;
 }
 
-.App-header h1 {
-  margin: 0;
-  color: white;
+/* Estilos para o Footer */
+footer {
+  background-color: #003366;
+  padding: 15px 0;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }
 
-/*TESTE*/
+footer p {
+  margin: 0;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+/* Login */
 
 label {
   display: block;
@@ -108,4 +120,347 @@ label {
   -moz-border-radius: 50%;
   -webkit-border-radius: 50%;
   border-radius: 50%;
+}
+
+/* Estilos para o cabeçalho da aplicação */
+.navbar {
+  background-color: #003366 !important; /* Corrigido para fundo azul escuro */
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+  color: #ffffff /* Cor da fonte para links no header */
+}
+
+.navbar-brand:hover,
+.navbar-nav .nav-link:hover {
+  color: #333333; /* Cor do texto ao passar o mouse */
+}
+
+/* Estilos para a página de usuários */
+.container {
+  margin-top: 20px;
+}
+
+/* Estilos para a tabela de usuários */
+.table {
+  width: 100%;
+  margin-top: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.table th, .table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.table th {
+  background-color: #003366;
+  color: white;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.table tbody tr:hover {
+  background-color: #e2e2e2;
+  cursor: pointer;
+}
+
+
+/* Estilos para os modais */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-dialog {
+  width: 50%;
+  max-width: 800px;
+  margin: 20px auto;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.modal-content {
+  padding: 20px;
+}
+
+.modal-header, .modal-footer {
+  padding: 10px 20px;
+  background-color: #003366;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  margin: 0;
+}
+
+.close {
+  cursor: pointer;
+  color: white;
+}
+
+.close:hover {
+  color: #bbb;
+}
+
+.modal-body {
+  padding-bottom: 20px;
+}
+
+/* Estilos para formulários */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin: auto;
+}
+
+.btn-block {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.btn-primary {
+  background-color: #003366;
+  color: white;
+  border: none;
+  margin: auto;
+}
+
+.btn-primary:hover {
+  color: #ffffff !important;
+}
+
+.btn-secondary {
+  background-color: #ccc;
+  color: #333;
+  border: none;
+  margin: 20px;
+}
+
+.btn-secondary:hover {
+  color: #ffffff !important;
+}
+
+.btn-danger {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #c9302c;
+}
+
+.order-info-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-info-button {
+  margin-left: auto !important;
+}
+
+/* Estilos para alertas */
+.alert {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+}
+
+.alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+/*button close without box*/
+.alert-success .close {
+    position: relative;
+    padding: 0.25rem 1.25rem;
+    top: 0;
+    right: 0;
+    color: inherit;
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.alert .close {
+  position: relative;
+  color: inherit;
+}
+
+.alert-danger .close {
+  position: relative;
+  padding: 0.25rem 1.25rem;
+  top: 0;
+  right: 0;
+  color: inherit;
+}
+
+.fade {
+  transition: opacity 0.15s linear;
+}
+
+/* Estilos para headers */
+.jumbotron {
+  background-color: #003366;
+  color: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.jumbotron h3 {
+  margin: 0;
+  color: white;
+}
+
+.jumbotron button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.jumbotron button:hover {
+  background-color: #0056b3;
+}
+
+/* Estilos para o Profile */
+.profile-card {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.profile-card p {
+  margin: 10px 0;
+}
+
+.profile-card strong {
+  color: #003366;
+}
+
+.profile-card button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 20px;
+}
+
+.profile-card button:hover {
+  background-color: #0056b3;
+}
+
+.username-profile {
+  font-weight: bold;
+}
+
+.jumbotron {
+  background-color: #003366;
+  color: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.jumbotron h3 {
+  margin: 0;
+}
+
+.jumbotron .username-profile {
+  color: #00ffa9;
+  margin: 10px;
+}
+
+.jumbotron button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.jumbotron button:hover {
+  background-color: #0056b3;
+}
+/*both buttons same size*/
+
+.btn-primary-home {
+  background-color: #003366;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 20px;
+  width: 15%;
+  text-align: center;
+}
+
+.btn-primary-home:hover {
+  background-color: #ffffff !important;
+  color: #003366;
+}
+
+.btn-secondary-home {
+  background-color: #003366;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 20px;
+  width: 15%;
+  text-align: center;
+}
+
+.btn-secondary-home:hover {
+  background-color: #ffffff !important;
+  color: #003366;
 }

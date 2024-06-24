@@ -3,62 +3,10 @@ import { Navigate } from "react-router-dom";
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
-import { isEmail } from "validator";
+import { required, email, vname, vpassword, vaddress } from "../helpers/validation";
 
 import AuthService from "../services/auth.service";
 import AllUsersService from "../services/crud/users.service";
-
-// Funções de validação
-const required = value => {
-    if (!value) {
-        return (
-            <div className="alert alert-danger" role="alert">
-                This field is required!
-            </div>
-        );
-    }
-};
-
-const email = value => {
-    if (!isEmail(value)) {
-        return (
-            <div className="alert alert-danger" role="alert">
-                Invalid email format.
-            </div>
-        );
-    }
-};
-
-const vname = value => {
-    if (value.length < 3 || value.length > 100) {
-        return (
-            <div className="alert alert-danger" role="alert">
-                The name must be between 3 and 100 characters.
-            </div>
-        );
-    }
-};
-
-const vpassword = value => {
-    if (value.length < 8 || value.length > 100) {
-        return (
-            <div className="alert alert-danger" role="alert">
-                The password must be between 8 and 100 characters.
-            </div>
-        );
-    }
-};
-
-// Endereço pode ser nulo ou vazio, mas se não for, deve ter entre 5 e 100 caracteres
-const vaddress = value => {
-    if (value && (value.length < 5 || value.length > 100)) {
-        return (
-            <div className="alert alert-danger" role="alert">
-                The address must be between 5 and 100 characters.
-            </div>
-        );
-    }
-};
 
 export default class Users extends Component {
     constructor(props) {
@@ -76,8 +24,16 @@ export default class Users extends Component {
                 address: "",
                 password: "",
             },
+            showEditModal: false,
+            currentUserToEdit: {
+                name: "",
+                email: "",
+                address: "",
+                password: "",
+            },
             error: false,
             errorMessage: "",
+            successMessage: "", // Novo estado para mensagens de sucesso
             modalErrorMessage: "", // Novo estado para mensagens de erro no modal
             accessDenied: false, // Estado para gerenciar o acesso negado
             accessDeniedMessage: "" // Mensagem de acesso negado
@@ -116,18 +72,37 @@ export default class Users extends Component {
             })
             .catch(error => {
                 console.error('Error fetching all users:', error);
+                this.setState({ error: true, errorMessage: "Failed to load users. Please try again later." });
             });
     }
 
     // Função para abrir o modal de adicionar usuário
     openModal = () => {
-        this.setState({ showModal: true, modalErrorMessage: "" });
+        this.setState({ showModal: true, modalErrorMessage: "", successMessage: "" });
     }
 
     // Função para fechar o modal de adicionar usuário
     closeModal = () => {
         this.setState({ showModal: false, modalErrorMessage: "" });
     }
+
+    openEditModal = user => {
+        this.setState({
+            showEditModal: true,
+            currentUserToEdit: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                address: user.address,
+                role: { roleName: user.role.roleName, roleId: user.role.roleId }
+            },
+            successMessage: ""
+        });
+    };
+
+    closeEditModal = () => {
+        this.setState({ showEditModal: false, currentUserToEdit: null });
+    };
 
     // Função para lidar com mudanças nos inputs do formulário de novo usuário
     handleInputChange = event => {
@@ -153,6 +128,7 @@ export default class Users extends Component {
                     console.log('User added:', response);
                     this.closeModal();
                     this.loadAllUsers();
+                    this.setState({ successMessage: "User added successfully!" });
                 })
                 .catch(error => {
                     console.error('Error adding user:', error);
@@ -161,9 +137,66 @@ export default class Users extends Component {
         }
     }
 
+    handleEditUserInputChange = event => {
+        const { name, value } = event.target;
+        this.setState(prevState => ({
+            currentUserToEdit: {
+                ...prevState.currentUserToEdit,
+                [name]: value
+            }
+        }));
+    };
+
+    handleEditUser = event => {
+        event.preventDefault();
+        const { currentUserToEdit } = this.state;
+        AllUsersService.editUser(currentUserToEdit.id, {
+            name: currentUserToEdit.name,
+            email: currentUserToEdit.email,
+            address: currentUserToEdit.address
+        })
+            .then(response => {
+                console.log('User updated:', response);
+                this.closeEditModal();
+                this.loadAllUsers();
+                this.setState({ successMessage: "User updated successfully!" });
+            })
+            .catch(error => {
+                console.error('Error updating user:', error);
+                this.setState({ modalErrorMessage: "Failed to update user. Please try again later." });
+            });
+    };
+
+    handleDeleteUser = () => {
+        const { currentUserToEdit } = this.state;
+
+        if (window.confirm(`Are you sure you want to delete user ${currentUserToEdit.name}?`)) {
+            AllUsersService.deleteUser(currentUserToEdit.id)
+                .then(response => {
+                    console.log('User deleted:', response);
+                    this.closeEditModal();
+                    this.loadAllUsers(); // Atualiza a lista de usuários após exclusão
+                    this.setState({ successMessage: "User deleted successfully!" });
+                })
+                .catch(error => {
+                    console.error('Error deleting user:', error);
+                    this.setState({ modalErrorMessage: "Failed to delete user. Please try again later." });
+                });
+        }
+    }
+
+    closeModalErrorMessage = () => {
+        this.setState({ modalErrorMessage: "" });
+    }
+
     // Função para fechar o alerta de erro
     closeErrorAlert = () => {
         this.setState({ error: false, errorMessage: "" });
+    }
+
+    // Função para fechar o alerta de sucesso
+    closeSuccessAlert = () => {
+        this.setState({ successMessage: "" });
     }
 
     render() {
@@ -171,7 +204,7 @@ export default class Users extends Component {
             return <Navigate to={this.state.redirect} />;
         }
 
-        const { users, showModal, newUser, error, errorMessage, modalErrorMessage, accessDenied, accessDeniedMessage } = this.state;
+        const { users, showModal, newUser, showEditModal, currentUserToEdit, error, errorMessage, successMessage, modalErrorMessage, accessDenied, accessDeniedMessage } = this.state;
 
         return (
             <div className="container">
@@ -190,19 +223,31 @@ export default class Users extends Component {
                                     Add User
                                 </button>
                             </header>
-                            <strong>Users:</strong>
-                            <ul>
+                            <table className="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Address</th>
+                                    <th>Role</th>
+                                </tr>
+                                </thead>
+                                <tbody>
                                 {users.map((user, index) => (
-                                    <li key={index}>
-                                        <strong>ID:</strong> {user.id}<br />
-                                        <strong>Name:</strong> {user.name}<br />
-                                        <strong>Email:</strong> {user.email}<br />
-                                        <strong>Address:</strong> {user.address}<br />
-                                        <strong>Role:</strong> {user.role.roleName} (ID: {user.role.roleId})
-                                    </li>
+                                    <tr key={index}>
+                                        <td>{user.id}</td>
+                                        <td onClick={() => this.openEditModal(user)} style={{ cursor: 'pointer', color: 'blue' }}>
+                                            {user.name}
+                                        </td>
+                                        <td>{user.email}</td>
+                                        <td>{user.address}</td>
+                                        <td>{user.role.roleName} (ID: {user.role.roleId})</td>
+                                    </tr>
                                 ))}
-                            </ul>
-                            {/* Modal para adicionar novo usuário... */}
+                                </tbody>
+                            </table>
+                            {/* Modal para adicionar novo usuário */}
                             {showModal && (
                                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: "block" }}>
                                     <div className="modal-dialog" role="document">
@@ -220,11 +265,71 @@ export default class Users extends Component {
                                                         this.form = c;
                                                     }}
                                                 >
-                                                    {/* Formulário para adicionar usuário... */}
+                                                    <div className="form-group">
+                                                        <label htmlFor="name">Name</label>
+                                                        <Input
+                                                            type="text"
+                                                            className="form-control"
+                                                            name="name"
+                                                            value={newUser.name}
+                                                            onChange={this.handleInputChange}
+                                                            validations={[required, vname]}
+                                                        />
+                                                    </div>
+
+                                                    <div className="form-group">
+                                                        <label htmlFor="email">Email</label>
+                                                        <Input
+                                                            type="text"
+                                                            className="form-control"
+                                                            name="email"
+                                                            value={newUser.email}
+                                                            onChange={this.handleInputChange}
+                                                            validations={[required, email]}
+                                                        />
+                                                    </div>
+
+                                                    <div className="form-group">
+                                                        <label htmlFor="password">Password</label>
+                                                        <Input
+                                                            type="password"
+                                                            className="form-control"
+                                                            name="password"
+                                                            value={newUser.password}
+                                                            onChange={this.handleInputChange}
+                                                            validations={[required, vpassword]}
+                                                        />
+                                                    </div>
+
+                                                    <div className="form-group">
+                                                        <label htmlFor="address">Address</label>
+                                                        <Input
+                                                            type="text"
+                                                            className="form-control"
+                                                            name="address"
+                                                            value={newUser.address}
+                                                            onChange={this.handleInputChange}
+                                                            validations={[vaddress]}
+                                                        />
+                                                    </div>
+
+                                                    <div className="form-group">
+                                                        <button className="btn btn-primary btn-block">Save changes</button>
+                                                    </div>
+
+                                                    <CheckButton
+                                                        style={{ display: "none" }}
+                                                        ref={c => {
+                                                            this.checkBtn = c;
+                                                        }}
+                                                    />
                                                 </Form>
                                                 {modalErrorMessage && (
                                                     <div className="alert alert-danger" role="alert">
                                                         {modalErrorMessage}
+                                                        <button type="button" className="close" onClick={this.closeModalErrorMessage}>
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
                                                     </div>
                                                 )}
                                             </div>
@@ -235,11 +340,117 @@ export default class Users extends Component {
                                     </div>
                                 </div>
                             )}
-                            {/* Alerta de erro... */}
+                            {/* Modal para editar usuário */}
+                            {showEditModal && currentUserToEdit && (
+                                <div className="modal" tabIndex="-1" role="dialog" style={{ display: "block" }}>
+                                    <div className="modal-dialog" role="document">
+                                        <div className="modal-content">
+                                            <div className="modal-header">
+                                                <h5 className="modal-title">Edit User</h5>
+                                                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={this.closeEditModal}>
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div className="modal-body">
+                                                <Form
+                                                    onSubmit={this.handleEditUser}
+                                                    ref={c => {
+                                                        this.form = c;
+                                                    }}
+                                                >
+                                                    <div className="form-group">
+                                                        <label htmlFor="name">Name</label>
+                                                        <Input
+                                                            type="text"
+                                                            className="form-control"
+                                                            name="name"
+                                                            value={currentUserToEdit.name}
+                                                            onChange={this.handleEditUserInputChange}
+                                                            validations={[required, vname]}
+                                                        />
+                                                    </div>
+
+                                                    <div className="form-group">
+                                                        <label htmlFor="email">Email</label>
+                                                        <Input
+                                                            type="text"
+                                                            className="form-control"
+                                                            name="email"
+                                                            value={currentUserToEdit.email}
+                                                            onChange={this.handleEditUserInputChange}
+                                                            validations={[required, email]}
+                                                        />
+                                                    </div>
+
+                                                    <div className="form-group">
+                                                        <label htmlFor="address">Address</label>
+                                                        <Input
+                                                            type="text"
+                                                            className="form-control"
+                                                            name="address"
+                                                            value={currentUserToEdit.address}
+                                                            onChange={this.handleEditUserInputChange}
+                                                            validations={[vaddress]}
+                                                        />
+                                                    </div>
+
+                                                    <div className="form-group">
+                                                        <label htmlFor="role">Role</label>
+                                                        <Input
+                                                            type="text"
+                                                            className="form-control"
+                                                            name="role"
+                                                            value={currentUserToEdit.role.roleName}
+                                                            readOnly
+                                                        />
+                                                    </div>
+
+                                                    <div className="form-group">
+                                                        <button className="btn btn-primary btn-block">Save changes
+                                                        </button>
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <button className="btn btn-danger btn-block"
+                                                                onClick={this.handleDeleteUser}>Delete User
+                                                        </button>
+                                                    </div>
+                                                    <CheckButton
+                                                        style={{display: "none"}}
+                                                        ref={c => {
+                                                            this.checkBtn = c;
+                                                        }}
+                                                    />
+                                                </Form>
+                                                {modalErrorMessage && (
+                                                    <div className="alert alert-danger" role="alert">
+                                                        {modalErrorMessage}
+                                                        <button type="button" className="close" onClick={this.closeModalErrorMessage}>
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="modal-footer">
+                                                <button type="button" className="btn btn-secondary" onClick={this.closeEditModal}>Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            {/* Alerta de erro */}
                             {error && (
                                 <div className="alert alert-danger alert-dismissible fade show" role="alert">
                                     {errorMessage}
                                     <button type="button" className="close" onClick={this.closeErrorAlert}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            )}
+                            {/* Alerta de sucesso */}
+                            {successMessage && (
+                                <div className="alert alert-success alert-dismissible fade show" role="alert">
+                                    {successMessage}
+                                    <button type="button" className="close" onClick={this.closeSuccessAlert}>
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
