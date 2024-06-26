@@ -54,32 +54,6 @@ public class OrdersController {
         }
     }
 
-    @GetMapping("/date/{date}")
-    public ResponseEntity<List<Order>> getOrdersByDateDay(@PathVariable String date) {
-        try {
-            List<Order> orders = ordersService.getOrdersByDateDay(date);
-            if (orders.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(orders);
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @GetMapping("/month/{month}")
-    public ResponseEntity<List<Order>> getOrdersByMonth(@PathVariable String month) {
-        try {
-            List<Order> orders = ordersService.getOrdersByMonth(month);
-            if (orders.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(orders);
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
     @GetMapping("/{orderId}")
     public ResponseEntity<Order> getOrderById(@PathVariable int orderId) {
         try {

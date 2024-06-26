@@ -41,30 +41,6 @@ class AllOrderItemsService {
             });
     }
 
-    getOrderItemsByItemName(itemName) {
-        return axios.get(API_URL + '/itemName/' + itemName, { headers: authHeader() })
-            .then(response => {
-                console.log('Response:', response.data);
-                return response.data;
-            })
-            .catch(error => {
-                console.error(`Error fetching orderItem with Item Name ${itemName}:`, error);
-                throw error;
-            });
-    }
-
-    getOrderItemsByOrderNo(orderNo) {
-        return axios.get(API_URL + '/orderNo/' + orderNo, { headers: authHeader() })
-            .then(response => {
-                console.log('Response:', response.data);
-                return response.data;
-            })
-            .catch(error => {
-                console.error(`Error fetching orderItem with Order No ${orderNo}:`, error);
-                throw error;
-            });
-    }
-
     //Admin Role or Employer Role
     createOrderItem(data) {
         return axios.post(API_URL, data, { headers: authHeader() })

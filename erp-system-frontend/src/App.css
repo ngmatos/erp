@@ -175,7 +175,7 @@ label {
 
 /* Estilos para os modais */
 .modal {
-  display: none;
+  display: block;
   position: fixed;
   z-index: 1000;
   left: 0;
@@ -187,9 +187,9 @@ label {
 }
 
 .modal-dialog {
-  width: 50%;
+  width: 80%;
   max-width: 800px;
-  margin: 20px auto;
+  margin: 10% auto;
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -206,6 +206,16 @@ label {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.modal-header h3, .modal-footer h3, .modal-header h5, .modal-footer h5 {
+  color: white;
+}
+
+.modal-header button {
+  background-color: transparent;
+  border: none;
+  font-size: 24px;
 }
 
 .modal-title {
@@ -232,7 +242,6 @@ label {
 
 .form-control {
   width: 100%;
-  padding: 10px;
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;

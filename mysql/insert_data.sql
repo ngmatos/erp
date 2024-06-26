@@ -13,14 +13,14 @@ INSERT INTO user (name, email, address, password, role_id) VALUES ('Customer 1',
 INSERT INTO user (name, email, address, password, role_id) VALUES ('Customer 2', 'customer2@example.com', 'Customer 2 Address', 'senha_cus2', 4); -- CUSTOMER
 
 -- Inserção de algumas categorias
-INSERT INTO categories (category_name) VALUES ('Electronics');
-INSERT INTO categories (category_name) VALUES ('Clothing');
 INSERT INTO categories (category_name) VALUES ('Books');
+INSERT INTO categories (category_name) VALUES ('Clothing');
+INSERT INTO categories (category_name) VALUES ('Electronics');
 
 -- Inserção de alguns itens
-INSERT INTO items (name, category_id, stock_quantity) VALUES ('Smartphone', 1, 100);
+INSERT INTO items (name, category_id, stock_quantity) VALUES ('Smartphone', 3, 100);
 INSERT INTO items (name, category_id, stock_quantity) VALUES ('T-shirt', 2, 200);
-INSERT INTO items (name, category_id, stock_quantity) VALUES ('Novel', 3, 50);
+INSERT INTO items (name, category_id, stock_quantity) VALUES ('BD', 1, 50);
 
 -- Inserção de alguns status de pedido
 INSERT INTO order_status (status) VALUES ('Pending');
@@ -28,9 +28,9 @@ INSERT INTO order_status (status) VALUES ('Shipped');
 INSERT INTO order_status (status) VALUES ('Delivered');
 
 -- Inserção de alguns pedidos
-INSERT INTO orders (order_no, date_ordered, order_status_id, customer_id) VALUES ('ORD001', '2024-06-06', 1, 4); -- Pedido pendente do Customer 4
-INSERT INTO orders (order_no, date_ordered, order_status_id, customer_id) VALUES ('ORD002', '2024-06-07', 1, 5); -- Pedido pendente do Customer 5
-INSERT INTO orders (order_no, date_ordered, order_status_id, customer_id) VALUES ('ORD003', '2024-06-08', 2, 4); -- Pedido enviado do Customer 4
+INSERT INTO orders (order_no, date_ordered, order_status_id, customer_id) VALUES ('ORD0001', '2024-06-06', 1, 4); -- Pedido pendente do Customer 4
+INSERT INTO orders (order_no, date_ordered, order_status_id, customer_id) VALUES ('ORD0002', '2024-06-07', 1, 5); -- Pedido pendente do Customer 5
+INSERT INTO orders (order_no, date_ordered, order_status_id, customer_id) VALUES ('ORD0003', '2024-06-08', 2, 4); -- Pedido enviado do Customer 4
 
 -- Inserção de alguns itens do pedido
 INSERT INTO order_items (order_id, item_id, quantity) VALUES (1, 1, 2); -- 2 smartphones no primeiro pedido

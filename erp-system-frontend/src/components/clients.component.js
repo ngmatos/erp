@@ -273,7 +273,7 @@ export default class Clients extends Component {
                                 <div className="modal-dialog" role="document">
                                     <div className="modal-content">
                                         <div className="modal-header">
-                                            <h5 className="modal-title">Add New Client</h5>
+                                            <h3 className="modal-title">Add New Client</h3>
                                             <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={this.closeModalAddClient}>
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -347,7 +347,7 @@ export default class Clients extends Component {
                                 <div className="modal-dialog" role="document">
                                     <div className="modal-content">
                                         <div className="modal-header">
-                                            <h5 className="modal-title">Orders Details</h5>
+                                            <h3 className="modal-title">Orders Details</h3>
                                             <button type="button" className="close" aria-label="Close" onClick={this.closeModal}>
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -389,7 +389,7 @@ export default class Clients extends Component {
                                 <div className="modal-dialog" role="document">
                                     <div className="modal-content">
                                         <div className="modal-header">
-                                            <h5 className="modal-title">Edit Client</h5>
+                                            <h3 className="modal-title">Edit Client</h3>
                                             <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={this.closeModalEdit}>
                                                 <span aria-hidden="true">&times;</span>
                                             </button>

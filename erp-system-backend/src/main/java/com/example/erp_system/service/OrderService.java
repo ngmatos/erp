@@ -9,8 +9,6 @@ public interface OrderService {
     List<Order> getAllOrders();
     List<Order> getOrdersByStatus(String status);
     List<Order> getOrdersByCustomer(int customerId);
-    List<Order> getOrdersByDateDay(String date);
-    List<Order> getOrdersByMonth(String monthStr);
     Order getOrderById(int id);
     Order createOrder(Order order);
     Order updateOrder(int id, Order orderDetails);

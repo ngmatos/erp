@@ -3,10 +3,14 @@ import { Navigate } from "react-router-dom";
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
-import { required, email, vname, vpassword, vaddress } from "../helpers/validation";
+import { required, vstockQuantity } from "../helpers/validation";
 
 import AuthService from "../services/auth.service";
-import AllUsersService from "../services/crud/users.service";
+import AllOrderItemsService from "../services/crud/orderItems.service";
+import AllOrdersService from "../services/crud/orders.service";
+import AllOrderStatusService from "../services/crud/orderStatus.service";
+import AllClientsService from "../services/crud/clients.service";
+import AllItemsService from "../services/crud/items.service";
 
 export default class Orders extends Component {
     constructor(props) {
@@ -16,27 +20,50 @@ export default class Orders extends Component {
             redirect: null,
             userReady: false,
             currentUser: { email: "", user: {} },
-            users: [], // Estado para armazenar a lista de usuários
-            showModal: false,
-            newUser: {
-                name: "",
-                email: "",
-                address: "",
-                password: "",
+            orders: [], // Estado para armazenar a lista de orders
+            showModalAdd: false,
+            newOrder: {
+                id: null,
+                orderNo: "",
+                dateOrdered: "",
+                orderStatus: "",
+                customer: ""
+            },
+            newOrderComplete: {
+                id: null,
+                order: "",
+                item: "",
+                quantity: ""
             },
             showEditModal: false,
-            currentUserToEdit: {
-                name: "",
-                email: "",
-                address: "",
-                password: "",
+            currentOrderToEdit: {
+                id: null,
+                orderNo: "",
+                dateOrdered: "",
+                orderStatus: "",
+                customer: ""
+            },
+            currentOrderCompleteToEdit: {
+                id: null,
+                order: { id: null },
+                item: "",
+                quantity: ""
             },
             error: false,
             errorMessage: "",
             successMessage: "", // Novo estado para mensagens de sucesso
             modalErrorMessage: "", // Novo estado para mensagens de erro no modal
             accessDenied: false, // Estado para gerenciar o acesso negado
-            accessDeniedMessage: "" // Mensagem de acesso negado
+            accessDeniedMessage: "", // Mensagem de acesso negado
+            customers: [],
+            statuses: [],
+            items: [],
+            currentCustomer: {
+                name: "",
+                email: "",
+                address: ""
+            },
+            showCustomerModal: false
         };
     }
 
@@ -46,7 +73,7 @@ export default class Orders extends Component {
         if (!currentUser) {
             this.setState({ redirect: "/" });
         } else {
-            if (!currentUser.user.authorities.some(auth => auth.authority === "ROLE_ADMIN")) {
+            if (!currentUser.user.authorities.some(auth => auth.authority === "ROLE_ADMIN")  && !currentUser.user.authorities.some(auth => auth.authority === "ROLE_EMPLOYER")) {
                 this.setState({
                     redirect: "/",
                     accessDenied: true,
@@ -58,131 +85,308 @@ export default class Orders extends Component {
                     userReady: true
                 });
 
-                // Carregar a lista de usuários após o componente montar
-                this.loadAllUsers();
+                // Carregar a lista de pedidos após o componente montar
+                this.loadAllOrders();
             }
         }
     }
 
-    // Função para carregar todos os usuários usando AllUsersService
-    loadAllUsers() {
-        AllUsersService.getAllUsers()
+    loadAllOrders() {
+        AllOrderItemsService.getAllOrderItems()
             .then(response => {
-                this.setState({ users: response });
+                this.setState({ orders: response });
             })
             .catch(error => {
-                console.error('Error fetching all users:', error);
-                this.setState({ error: true, errorMessage: "Failed to load users. Please try again later." });
+                console.error('Error fetching all orders:', error);
+                this.setState({ error: true, errorMessage: "Failed to load orders. Please try again later." });
             });
     }
 
-    // Função para abrir o modal de adicionar usuário
-    openModal = () => {
-        this.setState({ showModal: true, modalErrorMessage: "", successMessage: "" });
+    loadAllCustomers() {
+        AllClientsService.getAllClients()
+            .then(response => {
+                this.setState({ customers: response });
+            })
+            .catch(error => {
+                console.error('Error fetching all customers:', error);
+                this.setState({ error: true, errorMessage: "Failed to load customers. Please try again later." });
+            });
     }
 
-    // Função para fechar o modal de adicionar usuário
-    closeModal = () => {
-        this.setState({ showModal: false, modalErrorMessage: "" });
+    loadAllOrderStatus() {
+        AllOrderStatusService.getAllOrderStatus()
+            .then(response => {
+                this.setState({ statuses: response });
+            })
+            .catch(error => {
+                console.error('Error fetching all order statuses:', error);
+                this.setState({ error: true, errorMessage: "Failed to load order statuses. Please try again later." });
+            });
     }
 
-    openEditModal = user => {
+    loadAllItems() {
+        AllItemsService.getAllItems()
+            .then(response => {
+                this.setState({ items: response });
+            })
+            .catch(error => {
+                console.error('Error fetching all items:', error);
+                this.setState({ error: true, errorMessage: "Failed to load items. Please try again later." });
+            });
+    }
+
+    // ADD ORDERS
+
+    openModalAdd = () => {
+        this.loadAllCustomers();
+        this.loadAllOrderStatus();
+        this.loadAllItems();
         this.setState({
-            showEditModal: true,
-            currentUserToEdit: {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                address: user.address,
-                role: { roleName: user.role.roleName, roleId: user.role.roleId }
+            showModalAdd: true,
+            modalErrorMessage: "",
+            successMessage: "",
+            newOrder: {
+                dateOrdered: "",
+                orderStatus: "", // Inicializado corretamente
+                customer: "" // Inicializado corretamente
             },
-            successMessage: ""
+            newOrderComplete: {
+                order: "", // Inicializado corretamente
+                item: "", // Inicializado corretamente
+                quantity: "" // Inicializado corretamente
+            }
         });
-    };
+    }
 
-    closeEditModal = () => {
-        this.setState({ showEditModal: false, currentUserToEdit: null });
-    };
 
-    // Função para lidar com mudanças nos inputs do formulário de novo usuário
-    handleInputChange = event => {
+    closeModalAdd = () => {
+        this.setState({ showModalAdd: false, modalErrorMessage: "" });
+    }
+
+    handleInputChangeAddOrder = event => {
         const { name, value } = event.target;
         this.setState(prevState => ({
-            newUser: {
-                ...prevState.newUser,
+            newOrder: {
+                ...prevState.newOrder,
                 [name]: value
             }
         }));
     }
 
-    // Função para adicionar novo usuário
-    handleAddUser = event => {
+
+    handleInputChangeAddOrderComplete = event => {
+        const { name, value } = event.target;
+        this.setState(prevState => ({
+            newOrderComplete: {
+                ...prevState.newOrderComplete,
+                [name]: value
+            }
+        }));
+    }
+
+    handleAddOrder = event => {
         event.preventDefault();
         this.form.validateAll();
 
         if (this.checkBtn.context._errors.length === 0) {
-            const { name, email, address, password } = this.state.newUser;
+            const { newOrder, newOrderComplete } = this.state;
 
-            AllUsersService.createUser({ name, email, address, password })
+            const order = {
+                dateOrdered: newOrder.dateOrdered,
+                orderStatus: {
+                    id: newOrder.orderStatus
+                },
+                customer: {
+                    id: newOrder.customer
+                }
+            };
+
+            AllOrdersService.createOrder(order)
                 .then(response => {
-                    console.log('User added:', response);
-                    this.closeModal();
-                    this.loadAllUsers();
-                    this.setState({ successMessage: "User added successfully!" });
+                    console.log('Order created:', response);
+                    this.setState({
+                        newOrderComplete: {
+                            ...newOrderComplete,
+                            order: response.orderId
+                        }
+                    });
+                    this.createOrderComplete(response.orderId, newOrderComplete.item);
                 })
                 .catch(error => {
-                    console.error('Error adding user:', error);
-                    this.setState({ modalErrorMessage: "Failed to add user. Please try again later." });
+                    console.error('Error creating order:', error);
+                    this.setState({ modalErrorMessage: error.response.data.message });
                 });
         }
     }
 
-    handleEditUserInputChange = event => {
+    createOrderComplete = (orderId, itemId) => {
+        const { newOrderComplete } = this.state;
+
+        const orderComplete = {
+            order: {
+                id: orderId
+            },
+            item: {
+                id: itemId
+            },
+            quantity: newOrderComplete.quantity
+        };
+
+        AllOrderItemsService.createOrderItem(orderComplete)
+            .then(response => {
+                this.closeModalAdd();
+                this.loadAllOrders();
+                this.setState({ successMessage: "Order created successfully!" });
+            })
+            .catch(error => {
+                console.error('Error creating order complete:', error);
+                this.setState({ modalErrorMessage: "Failed to create order complete. Please try again later." });
+            });
+    }
+
+    // EDIT ORDERS
+
+    openEditModal = order => {
+        this.loadAllCustomers();
+        this.loadAllOrderStatus();
+        this.loadAllItems();
+        this.setState({
+            showEditModal: true,
+            modalErrorMessage: "",
+            successMessage: "",
+            currentOrderCompleteToEdit: {
+                id: order.id,
+                order: { id: order.order.id },
+                item: order.item.id,
+                quantity: order.quantity
+            },
+            currentOrderToEdit: {
+                id: order.order.id,
+                orderStatus: order.order.orderStatus.id,
+                customer: order.order.customer.id
+            }
+        });
+    }
+
+    closeEditModal = () => {
+        this.setState({ showEditModal: false, modalErrorMessage: "" });
+    }
+
+    handleInputChangeEditOrder = event => {
         const { name, value } = event.target;
         this.setState(prevState => ({
-            currentUserToEdit: {
-                ...prevState.currentUserToEdit,
+            currentOrderToEdit: {
+                ...prevState.currentOrderToEdit,
                 [name]: value
             }
         }));
-    };
+    }
 
-    handleEditUser = event => {
+    handleInputChangeEditOrderComplete = event => {
+        const { name, value } = event.target;
+        this.setState(prevState => ({
+            currentOrderCompleteToEdit: {
+                ...prevState.currentOrderCompleteToEdit,
+                [name]: value
+            }
+        }));
+    }
+
+    handleEditOrder = event => {
         event.preventDefault();
-        const { currentUserToEdit } = this.state;
-        AllUsersService.editUser(currentUserToEdit.id, {
-            name: currentUserToEdit.name,
-            email: currentUserToEdit.email,
-            address: currentUserToEdit.address
-        })
-            .then(response => {
-                console.log('User updated:', response);
-                this.closeEditModal();
-                this.loadAllUsers();
-                this.setState({ successMessage: "User updated successfully!" });
-            })
-            .catch(error => {
-                console.error('Error updating user:', error);
-                this.setState({ modalErrorMessage: "Failed to update user. Please try again later." });
-            });
-    };
+        this.form.validateAll();
 
-    handleDeleteUser = () => {
-        const { currentUserToEdit } = this.state;
+        if (this.checkBtn.context._errors.length === 0) {
+            const { currentOrderToEdit, currentOrderCompleteToEdit } = this.state;
 
-        if (window.confirm(`Are you sure you want to delete user ${currentUserToEdit.name}?`)) {
-            AllUsersService.deleteUser(currentUserToEdit.id)
+            const order = {
+                id: currentOrderToEdit.id,
+                orderStatus: {
+                    id: currentOrderToEdit.orderStatus
+                },
+                customer: {
+                    id: currentOrderToEdit.customer
+                }
+            };
+
+            AllOrdersService.editOrder(currentOrderToEdit.id, order)
                 .then(response => {
-                    console.log('User deleted:', response);
-                    this.closeEditModal();
-                    this.loadAllUsers(); // Atualiza a lista de usuários após exclusão
-                    this.setState({ successMessage: "User deleted successfully!" });
+                    console.log('Order edited:', response);
+                    this.setState({
+                        currentOrderCompleteToEdit: {
+                            ...currentOrderCompleteToEdit,
+                            order: response.id
+                        }
+                    })
+                    this.editOrderComplete(currentOrderCompleteToEdit.id, response.id, currentOrderCompleteToEdit.item);
                 })
                 .catch(error => {
-                    console.error('Error deleting user:', error);
-                    this.setState({ modalErrorMessage: "Failed to delete user. Please try again later." });
+                    console.error('Error editing order:', error);
+                    this.setState({ modalErrorMessage: "Failed to edit order. Please try again later." });
                 });
         }
+    }
+
+    editOrderComplete = (orderCompleteId, orderId, itemId) => {
+        const { currentOrderCompleteToEdit } = this.state;
+
+        const orderComplete = {
+            id: orderCompleteId,
+            order: {
+                id: orderId
+            },
+            item: {
+                id: itemId
+            },
+            quantity: currentOrderCompleteToEdit.quantity
+        };
+
+        AllOrderItemsService.editOrderItem(orderCompleteId, orderComplete)
+            .then(response => {
+                this.closeEditModal();
+                this.loadAllOrders();
+                this.setState({ successMessage: "Order edited successfully!" });
+            })
+            .catch(error => {
+                console.error('Error editing order complete:', error);
+                this.setState({ modalErrorMessage: "Failed to edit order complete. Please try again later." });
+            });
+    }
+
+    // DELETE ORDERS
+
+    handleDeleteOrderComplete = () => {
+        const { currentOrderCompleteToEdit } = this.state;
+        const orderCompleteId = currentOrderCompleteToEdit.id;
+        const orderId = currentOrderCompleteToEdit.order.id;
+
+        if (window.confirm("Are you sure you want to delete this order?")) {
+            AllOrderItemsService.deleteOrderItem(orderCompleteId)
+                .then(response => {
+                    console.log('Order complete deleted:', response);
+                    // After deleting the complete order item, delete the main order
+                    this.handleDeleteOrder(orderId);
+                })
+                .catch(error => {
+                    console.error('Error deleting order complete:', error);
+                    this.setState({ modalErrorMessage: "Failed to delete order complete. Please try again later." });
+                });
+        }
+    }
+
+    handleDeleteOrder = orderId => {
+        AllOrdersService.deleteOrder(orderId)
+            .then(response => {
+                console.log('Order deleted:', response);
+                this.closeEditModal();
+                this.loadAllOrders();
+                this.setState({ successMessage: "Order deleted successfully!" });
+            })
+            .catch(error => {
+                console.error('Error deleting order:', error);
+                // Show error message to the user
+                this.setState({ error: true, errorMessage: "Failed to delete order. Please try again later." });
+            });
     }
 
     closeModalErrorMessage = () => {
@@ -199,12 +403,69 @@ export default class Orders extends Component {
         this.setState({ successMessage: "" });
     }
 
+    // Modal para card de customer information
+
+    openCustomerModal = customer => {
+        this.setState({
+            showCustomerModal: true,
+            modalErrorMessage: "",
+            currentCustomer: {
+                name: customer.name,
+                email: customer.email,
+                address: customer.address
+            }
+        });
+    }
+
+    closeCustomerModal = () => {
+        this.setState({
+            showCustomerModal: false,
+            modalErrorMessage: "",
+            currentCustomer: {
+                name: "",
+                email: "",
+                address: ""
+            }
+        });
+    }
+
     render() {
         if (this.state.redirect) {
             return <Navigate to={this.state.redirect} />;
         }
 
-        const { users, showModal, newUser, showEditModal, currentUserToEdit, error, errorMessage, successMessage, modalErrorMessage, accessDenied, accessDeniedMessage } = this.state;
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = ("0" + date.getDate()).slice(-2);
+            const month = ("0" + (date.getMonth() + 1)).slice(-2);
+            const year = date.getFullYear();
+            const hours = ("0" + date.getHours()).slice(-2);
+            const minutes = ("0" + date.getMinutes()).slice(-2);
+
+            return `${day}-${month}-${year} ${hours}:${minutes}`;
+        }
+
+
+        const {
+            orders,
+            showModalAdd,
+            newOrder,
+            newOrderComplete,
+            showEditModal,
+            currentOrderToEdit,
+            currentOrderCompleteToEdit,
+            error,
+            errorMessage,
+            successMessage,
+            modalErrorMessage,
+            accessDenied,
+            accessDeniedMessage,
+            customers,
+            statuses,
+            items,
+            currentCustomer,
+            showCustomerModal
+        } = this.state;
 
         return (
             <div className="container">
@@ -217,202 +478,183 @@ export default class Orders extends Component {
                         <div>
                             <header className="jumbotron">
                                 <h3>
-                                    <strong>USERS TABLE</strong>
+                                    <strong>ORDERS TABLE</strong>
                                 </h3>
-                                <button className="btn btn-primary" onClick={this.openModal}>
-                                    Add User
+                                <button className="btn btn-primary" onClick={this.openModalAdd}>
+                                    Add Order
                                 </button>
+
                             </header>
+                            {error && (
+                                <div className="alert alert-danger" role="alert">
+                                    {errorMessage}
+                                    <button type="button" className="close" onClick={this.closeErrorAlert}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            )}
+                            {successMessage && (
+                                <div className="alert alert-success" role="alert">
+                                    {successMessage}
+                                    <button type="button" className="close" onClick={this.closeSuccessAlert}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            )}
                             <table className="table table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Address</th>
-                                    <th>Role</th>
+                                    <th>Order Number</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Customer</th>
+                                    <th>Status</th>
+                                    <th>Date Ordered</th>
+                                    <th>Date Created</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {users.map((user, index) => (
+                                {orders.map((orderSingular, index) => (
                                     <tr key={index}>
-                                        <td>{user.id}</td>
-                                        <td onClick={() => this.openEditModal(user)} style={{ cursor: 'pointer', color: 'blue' }}>
-                                            {user.name}
+                                        <td onClick={() => this.openEditModal(orderSingular)}
+                                            style={{cursor: 'pointer', color: 'blue'}}>
+                                            {orderSingular.order.orderNo}
                                         </td>
-                                        <td>{user.email}</td>
-                                        <td>{user.address}</td>
-                                        <td>{user.role.roleName} (ID: {user.role.roleId})</td>
+                                        <td>{orderSingular.item.name}</td>
+                                        <td>{orderSingular.quantity}</td>
+                                        <td onClick={() => this.openCustomerModal(orderSingular.order.customer)}  style={{cursor: 'pointer', color: 'blue'}}>
+                                            {orderSingular.order.customer.name}
+                                        </td>
+                                        <td>{orderSingular.order.orderStatus.status}</td>
+                                        {/*Mudar cor mediante o status*/}
+                                        <td>{formatDate(orderSingular.order.dateOrdered)}</td>
+                                        <td>{formatDate(orderSingular.order.dateCreated)}</td>
                                     </tr>
                                 ))}
                                 </tbody>
                             </table>
-                            {/* Modal para adicionar novo usuário */}
-                            {showModal && (
-                                <div className="modal" tabIndex="-1" role="dialog" style={{ display: "block" }}>
-                                    <div className="modal-dialog" role="document">
+                            {showCustomerModal && (
+                                <div className="modal">
+                                    <div className="modal-dialog">
                                         <div className="modal-content">
-                                            <div className="modal-header">
-                                                <h5 className="modal-title">Add New User</h5>
-                                                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={this.closeModal}>
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
+                                            <header className="modal-header">
+                                                <h3>
+                                                    <strong>CLIENT {currentCustomer.name}</strong>
+                                                </h3>
+                                                <button type="button" className="close" onClick={this.closeCustomerModal}>&times;</button>
+                                            </header>
                                             <div className="modal-body">
-                                                <Form
-                                                    onSubmit={this.handleAddUser}
-                                                    ref={c => {
-                                                        this.form = c;
-                                                    }}
-                                                >
-                                                    <div className="form-group">
-                                                        <label htmlFor="name">Name</label>
-                                                        <Input
-                                                            type="text"
-                                                            className="form-control"
-                                                            name="name"
-                                                            value={newUser.name}
-                                                            onChange={this.handleInputChange}
-                                                            validations={[required, vname]}
-                                                        />
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <label htmlFor="email">Email</label>
-                                                        <Input
-                                                            type="text"
-                                                            className="form-control"
-                                                            name="email"
-                                                            value={newUser.email}
-                                                            onChange={this.handleInputChange}
-                                                            validations={[required, email]}
-                                                        />
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <label htmlFor="password">Password</label>
-                                                        <Input
-                                                            type="password"
-                                                            className="form-control"
-                                                            name="password"
-                                                            value={newUser.password}
-                                                            onChange={this.handleInputChange}
-                                                            validations={[required, vpassword]}
-                                                        />
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <label htmlFor="address">Address</label>
-                                                        <Input
-                                                            type="text"
-                                                            className="form-control"
-                                                            name="address"
-                                                            value={newUser.address}
-                                                            onChange={this.handleInputChange}
-                                                            validations={[vaddress]}
-                                                        />
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <button className="btn btn-primary btn-block">Save changes</button>
-                                                    </div>
-
-                                                    <CheckButton
-                                                        style={{ display: "none" }}
-                                                        ref={c => {
-                                                            this.checkBtn = c;
-                                                        }}
-                                                    />
-                                                </Form>
-                                                {modalErrorMessage && (
-                                                    <div className="alert alert-danger" role="alert">
-                                                        {modalErrorMessage}
-                                                        <button type="button" className="close" onClick={this.closeModalErrorMessage}>
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                )}
+                                                <table className="table table-bordered table-striped">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Email</th>
+                                                        <th>Address</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>{currentCustomer.name}</td>
+                                                        <td>{currentCustomer.email}</td>
+                                                        <td>{currentCustomer.address}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                             <div className="modal-footer">
-                                                <button type="button" className="btn btn-secondary" onClick={this.closeModal}>Close</button>
+                                                <button type="button" className="btn btn-secondary" onClick={this.closeCustomerModal}>Close</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             )}
-                            {/* Modal para editar usuário */}
-                            {showEditModal && currentUserToEdit && (
-                                <div className="modal" tabIndex="-1" role="dialog" style={{ display: "block" }}>
-                                    <div className="modal-dialog" role="document">
+                            {showModalAdd && (
+                                <div className="modal" style={{ display: 'block' }}>
+                                    <div className="modal-dialog">
                                         <div className="modal-content">
                                             <div className="modal-header">
-                                                <h5 className="modal-title">Edit User</h5>
-                                                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={this.closeEditModal}>
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
+                                                <h3 className="modal-title">Add Order</h3>
+                                                <button type="button" className="close" onClick={this.closeModalAdd}>&times;</button>
                                             </div>
                                             <div className="modal-body">
                                                 <Form
-                                                    onSubmit={this.handleEditUser}
+                                                    onSubmit={this.handleAddOrder}
                                                     ref={c => {
                                                         this.form = c;
                                                     }}
                                                 >
                                                     <div className="form-group">
-                                                        <label htmlFor="name">Name</label>
+                                                        <label htmlFor="dateOrdered">Date Ordered</label>
+                                                        <Input
+                                                            type="date"
+                                                            className="form-control"
+                                                            name="dateOrdered"
+                                                            value={newOrder.dateOrdered}
+                                                            onChange={this.handleInputChangeAddOrder}
+                                                            validations={[required]}
+                                                        />
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label htmlFor="customer">Customer</label>
+                                                        <select
+                                                            className="form-control"
+                                                            name="customer"
+                                                            value={newOrder.customer}
+                                                            onChange={this.handleInputChangeAddOrder}
+                                                        >
+                                                            <option value="">Select a customer</option>
+                                                            {customers.map(customer => (
+                                                                <option key={customer.id} value={customer.id}>
+                                                                    {customer.name}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label htmlFor="orderStatus">Order Status</label>
+                                                        <select
+                                                            className="form-control"
+                                                            name="orderStatus"
+                                                            value={newOrder.orderStatus}
+                                                            onChange={this.handleInputChangeAddOrder}
+                                                        >
+                                                            <option value="">Select a status</option>
+                                                            {statuses.map(status => (
+                                                                <option key={status.id} value={status.id}>
+                                                                    {status.status}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label htmlFor="item">Product</label>
+                                                        <select
+                                                            className="form-control"
+                                                            name="item"
+                                                            value={newOrderComplete.item}
+                                                            onChange={this.handleInputChangeAddOrderComplete}
+                                                        >
+                                                            <option value="">Select a product</option>
+                                                            {items.map(item => (
+                                                                <option key={item.id} value={item.id}>
+                                                                    {item.name}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label htmlFor="quantity">Quantity</label>
                                                         <Input
                                                             type="text"
                                                             className="form-control"
-                                                            name="name"
-                                                            value={currentUserToEdit.name}
-                                                            onChange={this.handleEditUserInputChange}
-                                                            validations={[required, vname]}
+                                                            name="quantity"
+                                                            value={newOrderComplete.quantity}
+                                                            onChange={this.handleInputChangeAddOrderComplete}
+                                                            validations={[required, vstockQuantity]}
                                                         />
                                                     </div>
-
                                                     <div className="form-group">
-                                                        <label htmlFor="email">Email</label>
-                                                        <Input
-                                                            type="text"
-                                                            className="form-control"
-                                                            name="email"
-                                                            value={currentUserToEdit.email}
-                                                            onChange={this.handleEditUserInputChange}
-                                                            validations={[required, email]}
-                                                        />
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <label htmlFor="address">Address</label>
-                                                        <Input
-                                                            type="text"
-                                                            className="form-control"
-                                                            name="address"
-                                                            value={currentUserToEdit.address}
-                                                            onChange={this.handleEditUserInputChange}
-                                                            validations={[vaddress]}
-                                                        />
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <label htmlFor="role">Role</label>
-                                                        <Input
-                                                            type="text"
-                                                            className="form-control"
-                                                            name="role"
-                                                            value={currentUserToEdit.role.roleName}
-                                                            readOnly
-                                                        />
-                                                    </div>
-
-                                                    <div className="form-group">
-                                                        <button className="btn btn-primary btn-block">Save changes
-                                                        </button>
-                                                    </div>
-                                                    <div className="form-group">
-                                                        <button className="btn btn-danger btn-block"
-                                                                onClick={this.handleDeleteUser}>Delete User
-                                                        </button>
+                                                        <button className="btn btn-primary btn-block">Add Order</button>
                                                     </div>
                                                     <CheckButton
                                                         style={{display: "none"}}
@@ -424,35 +666,129 @@ export default class Orders extends Component {
                                                 {modalErrorMessage && (
                                                     <div className="alert alert-danger" role="alert">
                                                         {modalErrorMessage}
-                                                        <button type="button" className="close" onClick={this.closeModalErrorMessage}>
+                                                        <button type="button" className="close"
+                                                                onClick={this.closeModalErrorMessage}>
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
                                                 )}
                                             </div>
                                             <div className="modal-footer">
-                                                <button type="button" className="btn btn-secondary" onClick={this.closeEditModal}>Close</button>
+                                            <button type="button" className="btn btn-secondary"
+                                                        onClick={this.closeModalAdd}>Close
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             )}
-                            {/* Alerta de erro */}
-                            {error && (
-                                <div className="alert alert-danger alert-dismissible fade show" role="alert">
-                                    {errorMessage}
-                                    <button type="button" className="close" onClick={this.closeErrorAlert}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            )}
-                            {/* Alerta de sucesso */}
-                            {successMessage && (
-                                <div className="alert alert-success alert-dismissible fade show" role="alert">
-                                    {successMessage}
-                                    <button type="button" className="close" onClick={this.closeSuccessAlert}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                            {showEditModal && (
+                                <div className="modal" style={{display: 'block'}}>
+                                    <div className="modal-dialog">
+                                        <div className="modal-content">
+                                            <div className="modal-header">
+                                                <h3 className="modal-title">Edit Order</h3>
+                                                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={this.closeEditModal}>
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div className="modal-body">
+                                                <Form
+                                                    onSubmit={this.handleEditOrder}
+                                                    ref={c => {
+                                                        this.form = c;
+                                                    }}
+                                                >
+                                                    <div className="form-group">
+                                                        <label htmlFor="customer">Customer</label>
+                                                        <select
+                                                            className="form-control"
+                                                            name="customer"
+                                                            value={currentOrderToEdit.customer}
+                                                            onChange={this.handleInputChangeEditOrder}
+                                                        >
+                                                            <option value="">Select a customer</option>
+                                                            {customers.map(customer => (
+                                                                <option key={customer.id} value={customer.id}>
+                                                                    {customer.name}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label htmlFor="orderStatus">Order Status</label>
+                                                        <select
+                                                            className="form-control"
+                                                            name="orderStatus"
+                                                            value={currentOrderToEdit.orderStatus}
+                                                            onChange={this.handleInputChangeEditOrder}
+                                                        >
+                                                            <option value="">Select a status</option>
+                                                            {statuses.map(status => (
+                                                                <option key={status.id} value={status.id}>
+                                                                    {status.status}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label htmlFor="item">Product</label>
+                                                        <select
+                                                            className="form-control"
+                                                            name="item"
+                                                            value={currentOrderCompleteToEdit.item}
+                                                            onChange={this.handleInputChangeEditOrderComplete}
+                                                        >
+                                                            <option value="">Select a product</option>
+                                                            {items.map(item => (
+                                                                <option key={item.id} value={item.id}>
+                                                                    {item.name}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label htmlFor="quantity">Quantity</label>
+                                                        <Input
+                                                            type="text"
+                                                            className="form-control"
+                                                            name="quantity"
+                                                            value={currentOrderCompleteToEdit.quantity}
+                                                            onChange={this.handleInputChangeEditOrderComplete}
+                                                            validations={[required, vstockQuantity]}
+                                                        />
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <button className="btn btn-primary btn-block">Save Changes
+                                                        </button>
+                                                    </div>
+                                                    <CheckButton
+                                                        style={{display: "none"}}
+                                                        ref={c => {
+                                                            this.checkBtn = c;
+                                                        }}
+                                                    />
+                                                </Form>
+                                                <button className="btn btn-danger btn-block" onClick={this.handleDeleteOrderComplete}>
+                                                    Delete Order
+                                                </button>
+                                                {modalErrorMessage && (
+                                                    <div className="alert alert-danger" role="alert">
+                                                        {modalErrorMessage}
+                                                        <button type="button" className="close"
+                                                                onClick={this.closeModalErrorMessage}>
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="modal-footer">
+                                                <button type="button" className="btn btn-secondary"
+                                                        onClick={this.closeEditModal}>Close
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
                         </div>

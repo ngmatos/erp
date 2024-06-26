@@ -8,8 +8,6 @@ import java.util.Optional;
 public interface OrderItemService {
     List<OrderItem> getAllOrderItems();
     Optional<List<OrderItem>> getOrderItemsByQuantity(int quantity);
-    Optional<List<OrderItem>> getOrderItemsByItemName(String itemName);
-    Optional<List<OrderItem>> getOrderItemsByOrderNo(String orderNo);
     Optional<OrderItem> getOrderItemById(int id);
     OrderItem createOrderItem(OrderItem orderItem);
     Optional<OrderItem> updateOrderItem(int id, OrderItem orderItemDetails);

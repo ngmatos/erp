@@ -53,32 +53,6 @@ class AllOrdersService {
             });
     }
 
-    //"yyyy-MM-dd"
-    getOrdersByDateDay(dateDay) {
-        return axios.get(API_URL + '/date/' + dateDay, { headers: authHeader() })
-            .then(response => {
-                console.log('Response:', response.data);
-                return response.data;
-            })
-            .catch(error => {
-                console.error(`Error fetching orders with date ${dateDay}:`, error);
-                throw error;
-            });
-    }
-
-    //"yyyy-MM"
-    getOrdersByMonth(month) {
-        return axios.get(API_URL + '/month/' + month, { headers: authHeader() })
-            .then(response => {
-                console.log('Response:', response.data);
-                return response.data;
-            })
-            .catch(error => {
-                console.error(`Error fetching orders with month ${month}:`, error);
-                throw error;
-            });
-    }
-
     //Admin Role or Employer Role
     createOrder(data) {
         return axios.post(API_URL, data, { headers: authHeader() })

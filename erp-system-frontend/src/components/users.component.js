@@ -253,7 +253,7 @@ export default class Users extends Component {
                                     <div className="modal-dialog" role="document">
                                         <div className="modal-content">
                                             <div className="modal-header">
-                                                <h5 className="modal-title">Add New User</h5>
+                                                <h3 className="modal-title">Add New User</h3>
                                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={this.closeModal}>
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -346,7 +346,7 @@ export default class Users extends Component {
                                     <div className="modal-dialog" role="document">
                                         <div className="modal-content">
                                             <div className="modal-header">
-                                                <h5 className="modal-title">Edit User</h5>
+                                                <h3 className="modal-title">Edit User</h3>
                                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={this.closeEditModal}>
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>

@@ -54,36 +54,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getOrdersByDateDay(String dateStr) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date date;
-        try {
-            date = sdf.parse(dateStr);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("Invalid date format. Please use yyyy-MM-dd");
-        }
-        return orderRepository.findByDateOrdered(date);
-    }
-
-    @Override
-    public List<Order> getOrdersByMonth(String monthStr) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
-        Date date;
-        try {
-            date = sdf.parse(monthStr);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("Invalid month format. Please use yyyy-MM");
-        }
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH) + 1; // Calendar.MONTH is zero-based
-
-        return orderRepository.findByYearAndMonth(year, month);
-    }
-
-    @Override
     public Order getOrderById(int id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with id " + id));
@@ -92,6 +62,22 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order createOrder(Order order) {
         try {
+            Optional<User> optionalCustomer = userRepository.findById(order.getCustomer().getId());
+
+            if (optionalCustomer.isPresent()) {
+                order.setCustomer(optionalCustomer.get());
+            } else {
+                throw new OrderCreationException("Customer with id " + order.getCustomer().getId() + " not found.");
+            }
+
+            Optional<OrderStatus> orderStatus = orderStatusRepository.findById(order.getOrderStatus().getId());
+
+            if (orderStatus.isPresent()) {
+                order.setOrderStatus(orderStatus.get());
+            } else {
+                throw new OrderCreationException("Order status with id " + order.getOrderStatus().getId() + " not found.");
+            }
+
             order.setOrderNo(generateOrderNo());
             order.setDateCreated(Date.from(Instant.now()));
             return orderRepository.save(order);
@@ -103,22 +89,43 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order updateOrder(int id, Order orderDetails) {
         Optional<Order> optionalOrder = orderRepository.findById(id);
+
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
-            if(orderDetails.getOrderStatus() != null && !orderDetails.getOrderStatus().equals(order.getOrderStatus())) {
-                order.setOrderStatus(orderDetails.getOrderStatus());
-            } else { order.setOrderStatus(order.getOrderStatus()); }
-            if(orderDetails.getDateOrdered() != null && !orderDetails.getDateOrdered().equals(order.getDateOrdered())) {
+
+            // Atualiza o orderStatus se fornecido e diferente do existente
+            if (orderDetails.getOrderStatus() != null) {
+                Optional<OrderStatus> orderStatus = orderStatusRepository.findById(orderDetails.getOrderStatus().getId());
+
+                if (orderStatus.isPresent()) {
+                    order.setOrderStatus(orderStatus.get());
+                } else {
+                    throw new OrderUpdateException("Order status with id " + orderDetails.getOrderStatus().getId() + " not found.");
+                }
+            }
+
+            // Atualiza a data do pedido se fornecida e diferente do existente
+            if (orderDetails.getDateOrdered() != null) {
                 order.setDateOrdered(orderDetails.getDateOrdered());
-            } else { order.setDateOrdered(order.getDateOrdered()); }
-            if(orderDetails.getCustomer() != null && !orderDetails.getCustomer().equals(order.getCustomer())) {
-                order.setCustomer(orderDetails.getCustomer());
-            } else { order.setCustomer(order.getCustomer()); }
+            }
+
+            // Atualiza o customer se fornecido e diferente do existente
+            if (orderDetails.getCustomer() != null) {
+                Optional<User> optionalCustomer = userRepository.findById(orderDetails.getCustomer().getId());
+
+                if (optionalCustomer.isPresent()) {
+                    order.setCustomer(optionalCustomer.get());
+                } else {
+                    throw new OrderUpdateException("Customer with id " + orderDetails.getCustomer().getId() + " not found.");
+                }
+            }
+
             return orderRepository.save(order);
         } else {
             throw new OrderUpdateException("Order not found with id " + id);
         }
     }
+
 
     @Override
     public void deleteOrder(int id) {
@@ -145,14 +152,14 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    //Example: ORD0001 (ORD + id(4 digits))
     private String generateOrderNo() {
-        String lastOrderNo = orderRepository.findLastOrderNo();
-        if (lastOrderNo == null) {
-            return "ORD001";
-        }
+        String prefix = "ORD";
+        // Get the max id from the database
+        int maxId = orderRepository.findAll().stream().mapToInt(Order::getId).max().orElse(0);
+        int nextId = maxId + 1;
 
-        int lastOrderNumber = Integer.parseInt(lastOrderNo.replace("ORD", ""));
-        int nextOrderNumber = lastOrderNumber + 1;
-        return String.format("ORD%03d", nextOrderNumber);
+        // Format the orderNo with leading zeros based on the nextId
+        return String.format("%s%04d", prefix, nextId);
     }
 }

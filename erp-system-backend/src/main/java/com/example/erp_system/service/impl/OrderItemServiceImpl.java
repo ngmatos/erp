@@ -44,36 +44,6 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     @Override
-    public Optional<List<OrderItem>> getOrderItemsByItemName(String itemName) {
-        try {
-            Optional<Items> item = itemsRepository.findByName(itemName);
-            if (item.isPresent()) {
-                List<OrderItem> orderItems = orderItemRepository.findByOrderId(item.get().getItemId());
-                return Optional.of(orderItems);
-            } else {
-                return Optional.empty();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao buscar itens por nome: " + itemName, e);
-        }
-    }
-
-    @Override
-    public Optional<List<OrderItem>> getOrderItemsByOrderNo(String orderNo) {
-        try {
-            Optional<Order> order = orderRepository.findByOrderNo(orderNo);
-            if (order.isPresent()) {
-                List<OrderItem> orderItems = orderItemRepository.findByOrderId(order.get().getOrderId());
-                return Optional.of(orderItems);
-            } else {
-                return Optional.empty();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao buscar itens por número de pedido: " + orderNo, e);
-        }
-    }
-
-    @Override
     public Optional<OrderItem> getOrderItemById(int id) {
         return orderItemRepository.findById(id);
     }
@@ -81,6 +51,20 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public OrderItem createOrderItem(OrderItem orderItem) {
         try {
+            Optional<Order> order = orderRepository.findById(orderItem.getOrder().getId());
+            if (order.isPresent()){
+                orderItem.setOrder(order.get());
+            } else {
+                throw new OrderItemCreationException("Pedido não encontrado com o ID " + orderItem.getOrder().getId());
+            }
+
+            Optional<Items> item = itemsRepository.findById(orderItem.getItem().getId());
+            if (item.isPresent()){
+                orderItem.setItem(item.get());
+            } else {
+                throw new OrderItemCreationException("Item não encontrado com o ID " + orderItem.getItem().getId());
+            }
+
             return orderItemRepository.save(orderItem);
         } catch (Exception e) {
             throw new OrderItemCreationException("Falha ao criar item de pedido: " + e.getMessage());
@@ -90,28 +74,43 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public Optional<OrderItem> updateOrderItem(int id, OrderItem orderItemDetails) {
         Optional<OrderItem> orderItem = orderItemRepository.findById(id);
+
         if (orderItem.isPresent()) {
             OrderItem updatedOrderItem = orderItem.get();
-            if(orderItemDetails.getOrder() != null && orderItemDetails.getOrder().equals(updatedOrderItem.getOrder())) {
-                updatedOrderItem.setOrder(orderItemDetails.getOrder());
-            } else{
-                updatedOrderItem.setOrder(updatedOrderItem.getOrder());
+
+            // Atualiza o order se fornecido e diferente do existente
+            if (orderItemDetails.getOrder() != null) {
+                Optional<Order> order = orderRepository.findById(orderItemDetails.getOrder().getId());
+
+                if (order.isPresent()) {
+                    updatedOrderItem.setOrder(order.get());
+                } else {
+                    throw new OrderItemUpdateException("Pedido não encontrado com o ID " + orderItemDetails.getOrder().getId());
+                }
             }
-            if(orderItemDetails.getItem() != null && orderItemDetails.getItem().equals(updatedOrderItem.getItem())) {
-                updatedOrderItem.setItem(orderItemDetails.getItem());
-            } else {
-                updatedOrderItem.setItem(updatedOrderItem.getItem());
+
+            // Atualiza o item se fornecido e diferente do existente
+            if (orderItemDetails.getItem() != null) {
+                Optional<Items> item = itemsRepository.findById(orderItemDetails.getItem().getId());
+
+                if (item.isPresent()) {
+                    updatedOrderItem.setItem(item.get());
+                } else {
+                    throw new OrderItemUpdateException("Item não encontrado com o ID " + orderItemDetails.getItem().getId());
+                }
             }
-            if(orderItemDetails.getQuantity() != updatedOrderItem.getQuantity()) {
+
+            // Atualiza a quantidade se fornecida e diferente do existente
+            if (orderItemDetails.getQuantity() != updatedOrderItem.getQuantity()) {
                 updatedOrderItem.setQuantity(orderItemDetails.getQuantity());
-            } else{
-                updatedOrderItem.setQuantity(updatedOrderItem.getQuantity());
             }
+
             return Optional.of(orderItemRepository.save(updatedOrderItem));
         } else {
             throw new OrderItemUpdateException("Item de pedido não encontrado com o ID " + id);
         }
     }
+
 
     @Override
     public void deleteOrderItem(int id) {

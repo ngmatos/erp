@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
-import { required, vname, vstockQuantity } from "../helpers/validation"; // Ajustei as validações importadas
+import { required, vname, vstockQuantity } from "../helpers/validation";
 import AuthService from "../services/auth.service";
 import AllItemsService from "../services/crud/items.service";
 import AllCategoryService from "../services/crud/category.service";
@@ -91,6 +91,7 @@ export default class Products extends Component {
 
     // Função para abrir o modal de adicionar produto
     openModal = () => {
+        this.loadAllCategories();
         this.setState({ showModal: true, modalErrorMessage: "", successMessage: "", newItem: { name: "", category: "", stockQuantity: "" } });
     }
 
@@ -101,12 +102,13 @@ export default class Products extends Component {
 
     // Função para abrir o modal de editar produto
     openEditModal = item => {
+        this.loadAllCategories();
         this.setState({
             showEditModal: true,
             currentItemToEdit: {
                 id: item.id,
                 name: item.name,
-                category: item.category.categoryName, // Selecionando o nome da categoria para edição
+                category: item.category.categoryName,
                 stockQuantity: item.stockQuantity
             },
             successMessage: ""
@@ -148,7 +150,20 @@ export default class Products extends Component {
         if (this.checkBtn.context._errors.length === 0) {
             const { name, category, stockQuantity } = this.state.newItem;
 
-            AllItemsService.createItem({ name, category, stockQuantity })
+            const categoryId = this.state.categories.find(cat => cat.categoryName === category)?.id;
+
+            if (!categoryId) {
+                this.setState({ modalErrorMessage: "Invalid category selected. Please select a valid category." });
+                return;
+            }
+
+            const newItem = {
+                name,
+                category: { categoryId },
+                stockQuantity
+            };
+
+            AllItemsService.createItem(newItem)
                 .then(response => {
                     console.log('Item added:', response);
                     this.closeModal();
@@ -166,11 +181,21 @@ export default class Products extends Component {
     handleEditUser = event => {
         event.preventDefault();
         const { currentItemToEdit } = this.state;
-        AllItemsService.editItem(currentItemToEdit.id, {
+
+        const categoryId = this.state.categories.find(cat => cat.categoryName === currentItemToEdit.category)?.id;
+
+        if (!categoryId) {
+            this.setState({ modalErrorMessage: "Invalid category selected. Please select a valid category." });
+            return;
+        }
+
+        const updatedItem = {
             name: currentItemToEdit.name,
-            category: currentItemToEdit.category,
+            category: { categoryId },
             stockQuantity: currentItemToEdit.stockQuantity
-        })
+        };
+
+        AllItemsService.editItem(currentItemToEdit.id, updatedItem)
             .then(response => {
                 console.log('Item updated:', response);
                 this.closeEditModal();
@@ -217,6 +242,10 @@ export default class Products extends Component {
         this.setState({ successMessage: "" });
     }
 
+    //Categories
+
+
+
     render() {
         if (this.state.redirect) {
             return <Navigate to={this.state.redirect} />;
@@ -250,7 +279,7 @@ export default class Products extends Component {
                                     <th>Quantity</th>
                                 </tr>
                                 </thead>
-                                <tbody>
+                                <tbody className="text-center">
                                 {products.map((item, index) => (
                                     <tr key={index}>
                                         <td>{item.id}</td>
@@ -269,7 +298,7 @@ export default class Products extends Component {
                                     <div className="modal-dialog" role="document">
                                         <div className="modal-content">
                                             <div className="modal-header">
-                                                <h5 className="modal-title">Add New Product</h5>
+                                                <h3 className="modal-title">Add New Product</h3>
                                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={this.closeModal}>
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -300,7 +329,6 @@ export default class Products extends Component {
                                                             name="category"
                                                             value={newItem.category}
                                                             onChange={this.handleInputChange}
-                                                            validations={[required]}
                                                         >
                                                             <option value="">Select a category</option>
                                                             {categories.map(category => (
@@ -349,14 +377,14 @@ export default class Products extends Component {
                                         </div>
                                     </div>
                                 </div>
-                                )}
+                            )}
                             {/* Modal para editar produto */}
                             {showEditModal && currentItemToEdit && (
                                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: "block" }}>
                                     <div className="modal-dialog" role="document">
                                         <div className="modal-content">
                                             <div className="modal-header">
-                                                <h5 className="modal-title">Edit Product</h5>
+                                                <h3 className="modal-title">Edit Product</h3>
                                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={this.closeEditModal}>
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -387,7 +415,6 @@ export default class Products extends Component {
                                                             name="category"
                                                             value={currentItemToEdit.category}
                                                             onChange={this.handleEditUserInputChange}
-                                                            validations={[required]}
                                                         >
                                                             <option value="">Select a category</option>
                                                             {categories.map(category => (
@@ -414,10 +441,6 @@ export default class Products extends Component {
                                                         <button className="btn btn-primary btn-block">Save changes</button>
                                                     </div>
 
-                                                    <div className="form-group">
-                                                        <button className="btn btn-danger btn-block" onClick={this.handleDeleteUser}>Delete Product</button>
-                                                    </div>
-
                                                     <CheckButton
                                                         style={{ display: "none" }}
                                                         ref={c => {
@@ -425,6 +448,7 @@ export default class Products extends Component {
                                                         }}
                                                     />
                                                 </Form>
+                                                <button className="btn btn-danger btn-block" onClick={this.handleDeleteUser}>Delete Product</button>
                                                 {modalErrorMessage && (
                                                     <div className="alert alert-danger" role="alert">
                                                         {modalErrorMessage}
@@ -466,3 +490,4 @@ export default class Products extends Component {
         );
     }
 }
+
