@@ -69,13 +69,16 @@ public class ItemsServiceImpl implements ItemsService {
 
         if(itemDetails.getItemName() != null && !itemDetails.getItemName().equals(item.getItemName())) {
             item.setItemName(itemDetails.getItemName());
-        }
+        } else{ item.setItemName(item.getItemName()); }
+
         if(itemDetails.getCategory() != null && !itemDetails.getCategory().equals(item.getCategory())) {
             item.setCategory(itemDetails.getCategory());
-        }
+        } else{ item.setCategory(item.getCategory()); }
+
         if(itemDetails.getStockQuantity() != item.getStockQuantity()) {
             item.setStockQuantity(itemDetails.getStockQuantity());
-        }
+        } else{ item.setStockQuantity(item.getStockQuantity()); }
+        
         return itemsRepository.save(item);
     }
 
@@ -98,6 +101,18 @@ public class ItemsServiceImpl implements ItemsService {
         if (stockQuantity == item.getStockQuantity()) {
             return item;
         }
+        return itemsRepository.save(item);
+    }
+
+    @Override
+    public Items removeStockQuantity(int id, int stockQuantity) {
+        Items item = itemsRepository.findById(id)
+                .orElseThrow(() -> new ItemsNotFoundException("Item not found with id " + id));
+
+        if(stockQuantity > item.getStockQuantity()) {
+            throw new IllegalArgumentException("Stock quantity cannot be greater than the current stock quantity");
+        }
+        item.setStockQuantity(item.getStockQuantity() - stockQuantity);
         return itemsRepository.save(item);
     }
 }

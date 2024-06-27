@@ -38,6 +38,19 @@ public class CustomExceptions {
         }
     }
 
+    public static class DataIntegrityViolationException extends RuntimeException {
+        private final Throwable rootCause;
+
+        public DataIntegrityViolationException(String message, Throwable rootCause) {
+            super(message);
+            this.rootCause = rootCause;
+        }
+
+        public Throwable getRootCause() {
+            return rootCause;
+        }
+    }
+
     public static class CategoryNotFoundException extends RuntimeException {
         public CategoryNotFoundException(String message) {
             super(message);

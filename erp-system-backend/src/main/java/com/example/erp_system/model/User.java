@@ -29,17 +29,18 @@ public class User implements UserDetails {
     private int id;
 
     @NotBlank(message = "A senha é obrigatória")
-    @Size(min = 8, max = 100, message = "A senha deve ter entre 8 e 100 caracteres")
+    @Size(min = 6, max = 100, message = "A senha deve ter entre 8 e 100 caracteres")
     private String password;
 
     @NotBlank(message = "O nome é obrigatório")
+    @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres")
     private String name;
 
     @NotBlank(message = "O e-mail é obrigatório")
     @Email(message = "Por favor, insira um endereço de e-mail válido")
     private String email;
 
-    @Size(min = 10, max = 100, message = "O endereço deve ter entre 10 e 100 caracteres")
+    @Size(min = 5, max = 100, message = "O endereço deve ter entre 10 e 100 caracteres")
     private String address;
 
     @ManyToOne(fetch = FetchType.EAGER)

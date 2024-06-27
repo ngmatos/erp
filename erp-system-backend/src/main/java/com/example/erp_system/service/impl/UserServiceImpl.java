@@ -75,15 +75,28 @@ public class UserServiceImpl implements UserService {
         if(userDetails.getPassword() != null && !userDetails.getPassword().equals(existingUser.getPassword())) {
             String encodedPassword = passwordEncoder.encode(userDetails.getPassword());
             existingUser.setPassword(encodedPassword);
+        } else{
+            existingUser.setPassword(existingUser.getPassword());
         }
         if(userDetails.getName() != null && !userDetails.getName().equals(existingUser.getName())) {
             existingUser.setName(userDetails.getName());
+        } else{
+            existingUser.setName(existingUser.getName());
         }
         if(userDetails.getEmail() != null && !userDetails.getEmail().equals(existingUser.getEmail())) {
             existingUser.setEmail(userDetails.getEmail());
+        } else{
+            existingUser.setEmail(existingUser.getEmail());
         }
         if(userDetails.getAddress() != null && !userDetails.getAddress().equals(existingUser.getAddress())) {
             existingUser.setAddress(userDetails.getAddress());
+        } else{
+            existingUser.setAddress(existingUser.getAddress());
+        }
+        if(userDetails.getRole() != null && userDetails.getRole().getId() != existingUser.getRole().getId()) {
+            existingUser.setRole(userDetails.getRole());
+        } else{
+            existingUser.setRole(existingUser.getRole());
         }
         return userRepository.save(existingUser);
     }
@@ -97,11 +110,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateRoleUser(int id, User userDetails) {
+    public User updateRoleUser(int id, String role) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
 
-        existingUser.setRole(userDetails.getRole());
+        if(roleRepository.findByRoleName(role) != null && roleRepository.findByRoleName(role).getId() != existingUser.getRole().getId()) {
+            existingUser.setRole(roleRepository.findByRoleName(role));
+        }
+        return userRepository.save(existingUser);
+    }
+
+    @Override
+    public User updatePassword(int id, String password, String oldPassword) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
+
+        if(passwordEncoder.matches(oldPassword, existingUser.getPassword())) {
+            String encodedPassword = passwordEncoder.encode(password);
+            existingUser.setPassword(encodedPassword);
+        } else {
+            throw new UserNotFoundException("Old password is incorrect");
+        }
         return userRepository.save(existingUser);
     }
 }

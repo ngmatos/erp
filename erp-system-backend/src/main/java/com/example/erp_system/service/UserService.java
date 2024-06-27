@@ -1,5 +1,6 @@
 package com.example.erp_system.service;
 
+import com.example.erp_system.model.Role;
 import com.example.erp_system.model.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -14,5 +15,6 @@ public interface UserService {
     User createUser(User user);
     User updateUser(int id, User userDetails);
     void deleteUser(int id);
-    User updateRoleUser(int id, User userDetails);
+    User updateRoleUser(int id, String role);
+    User updatePassword(int id, String password, String oldPassword);
 }

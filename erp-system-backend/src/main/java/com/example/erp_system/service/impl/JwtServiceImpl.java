@@ -22,6 +22,7 @@ import io.jsonwebtoken.security.Keys;
 public class JwtServiceImpl implements JwtService {
     @Value("${jwt.secret}")
     private String jwtSigningKey;
+
     @Override
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -46,7 +47,7 @@ public class JwtServiceImpl implements JwtService {
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + 10800000)) // 3 hours
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
     }
 

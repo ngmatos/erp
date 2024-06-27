@@ -11,7 +11,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      #- ./mysql/mysql-data:/var/lib/mysql # Guardar Backup de Database
+      - ./mysql/mysql-data:/var/lib/mysql # Guardar Backup de Database
       - ./mysql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
       - ./mysql/insert_data.sql:/docker-entrypoint-initdb.d/insert_data.sql
     networks:
@@ -43,16 +43,18 @@ services:
     depends_on:
       - backend
     ports:
-      - "3000:80"
+      - "3000:3000"
     networks:
       - erp-network
     environment:
-      - REACT_APP_BACKEND_URL=http://backend-container:8080/api
+      - REACT_APP_BACKEND_URL=http://backend-container:8080
     volumes:
       - ./erp-system-frontend/src:/app/src
       - ./erp-system-frontend/public:/app/public
       - ./erp-system-frontend/package.json:/app/package.json
       - ./erp-system-frontend/package-lock.json:/app/package-lock.json
+      - /app/node_modules
+    command: ["npm", "start"]
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin

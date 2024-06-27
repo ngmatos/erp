@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/orderItems")
 @RequiredArgsConstructor
@@ -35,38 +36,6 @@ public class OrderItemsController {
     public ResponseEntity<List<OrderItem>> getOrderItemsByQuantity(@PathVariable int quantity) {
         try {
             Optional<List<OrderItem>> orderItems = orderItemService.getOrderItemsByQuantity(quantity);
-            if (orderItems.isPresent() && !orderItems.get().isEmpty()) {
-                return ResponseEntity.ok(orderItems.get());
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (OrderItemNotFoundException ex) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping("/itemName/{itemName}")
-    public ResponseEntity<List<OrderItem>> getOrderItemsByItemName(@PathVariable String itemName) {
-        try {
-            Optional<List<OrderItem>> orderItems = orderItemService.getOrderItemsByItemName(itemName);
-            if (orderItems.isPresent() && !orderItems.get().isEmpty()) {
-                return ResponseEntity.ok(orderItems.get());
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (OrderItemNotFoundException ex) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping("/orderNo/{orderNo}")
-    public ResponseEntity<List<OrderItem>> getOrderItemsByOrderNo(@PathVariable String orderNo) {
-        try {
-            Optional<List<OrderItem>> orderItems = orderItemService.getOrderItemsByOrderNo(orderNo);
             if (orderItems.isPresent() && !orderItems.get().isEmpty()) {
                 return ResponseEntity.ok(orderItems.get());
             } else {

@@ -37,39 +37,4 @@ public class PasswordUpdateUtility {
             }
         }
     }
-
-    private final ItemsService itemsService;
-    private final CategoryRepository categoryRepository;
-    private final CategoryService categoryService;
-
-    @PostConstruct
-    public void addItemTest() {
-        Optional<Category> existingCategory = categoryRepository.findByCategoryName("TEST");
-        if (existingCategory.isEmpty()) {
-            Category categoryTest = new Category();
-            categoryTest.setCategoryName("TEST");
-            categoryService.createCategory(categoryTest);
-        }
-
-        Category testCategory = categoryRepository.findByCategoryName("TEST")
-                .orElseThrow(() -> new RuntimeException("Categoria 'TEST' não encontrada"));
-
-        Items itemTest = new Items();
-        itemTest.setItemName("TEST ITEM");
-        itemTest.setCategory(testCategory);
-
-        itemTest.setStockQuantity(100);
-
-        // Cria o item no serviço de itens
-        itemsService.createItem(itemTest);
-    }
-
-    @PostConstruct
-    public void addCategoryTest() {
-        if(categoryRepository.findByCategoryName("TEST2").isEmpty()) {
-            Category categoryTest = new Category();
-            categoryTest.setCategoryName("TEST2");
-            categoryService.createCategory(categoryTest);
-        }
-    }
 }

@@ -1,115 +1,487 @@
-/* Estilos gerais para a aplicação */
-.App {
-  text-align: center;
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f9;
-  color: #333;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 20px;
+/* Reset básico de estilos */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
   box-sizing: border-box;
 }
 
-/* Estilos para o logo da aplicação */
-.App-logo {
-  height: 80px;
-  pointer-events: none;
-  margin: 20px 0;
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
 }
 
-/* Animação do logo */
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 10s linear;
-  }
-}
-
-/* Estilos para o cabeçalho da aplicação */
-.App-header {
-  background-color: #003366;
-  width: 100%;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-/* Estilos para os links da aplicação */
-.App-link {
+/* Estilo para links globais */
+a {
   color: #007acc;
   text-decoration: none;
   font-weight: bold;
-  margin: 10px 0;
+  cursor: pointer;
 }
 
-.App-link:hover {
+a:hover {
   text-decoration: underline;
+  color: #003366;
 }
 
-/* Animação do logo */
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Estilos para todos os headers (cabeçalhos) */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #003366;
 }
 
-/* Estilos para o conteúdo principal */
-.App-content {
-  flex: 1;
-  width: 100%;
+/* Estilos Header */
+.App-header {
+  background-color: #003366;
+  color: white;
+  position: fixed;
+  top: 0;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.App-header img {
+  max-height: 40px;
+}
+
+.App-header ul {
+  list-style-type: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.App-header li {
+  margin-right: 15px;
+}
+
+.App-header li:last-child {
+  margin-right: 0;
+}
+
+.App-header a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.App-header a:hover {
+  text-decoration: underline;
+  color: brown;
+}
+
+/* Estilos para o Footer */
+#root {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  min-height: 100vh; /* Ocupa toda a altura da viewport */
 }
 
-/* Estilos para os botões da aplicação */
-.App-button {
-  background-color: #007acc;
+/* Ajustes para o Footer */
+footer {
+  background-color: #003366;
+  padding: 15px 0;
+  text-align: center;
+  color: #ffffff;
+  flex-shrink: 0; /* Evita que o footer diminua de tamanho */
+  width: 100%;
+}
+
+/* Estilo para o conteúdo principal */
+.main-content {
+  flex: 1; /* Ocupa o espaço restante */
+}
+
+footer p {
+  margin: 0;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+/* Login */
+
+label {
+  display: block;
+  margin-top: 10px;
+}
+
+.card-container.card {
+  max-width: 350px !important;
+  padding: 40px 40px;
+}
+
+.card {
+  background-color: #f7f7f7;
+  padding: 20px 25px 30px;
+  margin: 50px auto 25px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.profile-img-card {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 10px;
+  display: block;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+}
+
+/* Estilos para o cabeçalho da aplicação */
+.navbar {
+  background-color: #003366 !important; /* Corrigido para fundo azul escuro */
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+  color: #ffffff /* Cor da fonte para links no header */
+}
+
+.navbar-brand:hover,
+.navbar-nav .nav-link:hover {
+  color: #333333; /* Cor do texto ao passar o mouse */
+}
+
+/* Estilos para a página de usuários */
+.container {
+  margin-top: 20px;
+}
+
+/* Estilos para a tabela de usuários */
+.table {
+  width: 100%;
+  margin-top: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.table th, .table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.table th {
+  background-color: #003366;
   color: white;
-  border: none;
-  padding: 10px 20px;
-  margin: 10px;
-  border-radius: 5px;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.table tbody tr:hover {
+  background-color: #e2e2e2;
   cursor: pointer;
+}
+
+
+/* Estilos para os modais */
+.modal {
+  display: block;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-dialog {
+  width: 80%;
+  max-width: 800px;
+  margin: 10% auto;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.modal-content {
+  padding: 20px;
+}
+
+.modal-header, .modal-footer {
+  padding: 10px 20px;
+  background-color: #003366;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3, .modal-footer h3, .modal-header h5, .modal-footer h5 {
+  color: white;
+}
+
+.modal-header button {
+  background-color: transparent;
+  border: none;
+  font-size: 24px;
+}
+
+.modal-title {
+  margin: 0;
+}
+
+.close {
+  cursor: pointer;
+  color: white;
+}
+
+.close:hover {
+  color: #bbb;
+}
+
+.modal-body {
+  padding-bottom: 20px;
+}
+
+/* Estilos para formulários */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-control {
+  width: 100%;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin: auto;
+}
+
+.btn-block {
+  width: 100%;
+  padding: 10px;
   font-size: 16px;
 }
 
-.App-button:hover {
-  background-color: #005b99;
+.btn-primary {
+  background-color: #003366;
+  color: white;
+  border: none;
+  margin: auto;
 }
 
-/* Estilos para o corpo da página */
-body {
-  font-family: Arial, sans-serif; /* Fonte padrão para o texto */
-  margin: 0; /* Remova as margens padrão */
-  padding: 0; /* Remova o preenchimento padrão */
+.btn-primary:hover {
+  color: #ffffff !important;
 }
 
-/* Estilos para o container principal da aplicação */
-#root {
-  display: flex; /* Use display flex para organizar os elementos */
-  min-height: 100vh; /* Garanta que o container ocupe toda a altura da viewport */
-  flex-direction: column; /* Alinhe os itens verticalmente */
+.btn-secondary {
+  background-color: #ccc;
+  color: #333;
+  border: none;
+  margin: 20px;
 }
 
-/* Estilos para o cabeçalho */
-.header {
-  background-color: #282c34; /* Cor de fundo do cabeçalho */
-  color: white; /* Cor do texto do cabeçalho */
-  padding: 20px; /* Espaçamento interno */
+.btn-secondary:hover {
+  color: #ffffff !important;
 }
 
-/* Estilos para o conteúdo principal */
-.main-content {
-  flex: 1; /* Faça com que o conteúdo principal ocupe todo o espaço restante */
-  padding: 20px; /* Espaçamento interno */
+.btn-danger {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #c9302c;
+}
+
+.order-info-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-info-button {
+  margin-left: auto !important;
+}
+
+/* Estilos para alertas */
+.alert {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+}
+
+.alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+/*button close without box*/
+.alert-success .close {
+    position: relative;
+    padding: 0.25rem 1.25rem;
+    top: 0;
+    right: 0;
+    color: inherit;
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.alert .close {
+  position: relative;
+  color: inherit;
+}
+
+.alert-danger .close {
+  position: relative;
+  padding: 0.25rem 1.25rem;
+  top: 0;
+  right: 0;
+  color: inherit;
+}
+
+.fade {
+  transition: opacity 0.15s linear;
+}
+
+/* Estilos para headers */
+.jumbotron {
+  background-color: #003366;
+  color: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.jumbotron h3 {
+  margin: 0;
+  color: white;
+}
+
+.jumbotron button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.jumbotron button:hover {
+  background-color: #0056b3;
+}
+
+/* Estilos para o Profile */
+.profile-card {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.profile-card p {
+  margin: 10px 0;
+}
+
+.profile-card strong {
+  color: #003366;
+}
+
+.profile-card button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 20px;
+}
+
+.profile-card button:hover {
+  background-color: #0056b3;
+}
+
+.username-profile {
+  font-weight: bold;
+}
+
+.jumbotron {
+  background-color: #003366;
+  color: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.jumbotron h3 {
+  margin: 0;
+}
+
+.jumbotron .username-profile {
+  color: #00ffa9;
+  margin: 10px;
+}
+
+.jumbotron button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.jumbotron button:hover {
+  background-color: #0056b3;
+}
+/*both buttons same size*/
+
+.btn-primary-home {
+  background-color: #003366;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 20px;
+  width: 15%;
+  text-align: center;
+}
+
+.btn-primary-home:hover {
+  background-color: #ffffff !important;
+  color: #003366;
+}
+
+.btn-secondary-home {
+  background-color: #003366;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 20px;
+  width: 15%;
+  text-align: center;
+}
+
+.btn-secondary-home:hover {
+  background-color: #ffffff !important;
+  color: #003366;
 }

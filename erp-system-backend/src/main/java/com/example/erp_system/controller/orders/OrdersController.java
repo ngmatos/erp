@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
@@ -50,32 +51,6 @@ public class OrdersController {
             return ResponseEntity.ok(orders);
         } catch (OrderNotFoundException ex) {
             return ResponseEntity.notFound().build();
-        }
-    }
-
-    @GetMapping("/date/{date}")
-    public ResponseEntity<List<Order>> getOrdersByDateDay(@PathVariable String date) {
-        try {
-            List<Order> orders = ordersService.getOrdersByDateDay(date);
-            if (orders.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(orders);
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @GetMapping("/month/{month}")
-    public ResponseEntity<List<Order>> getOrdersByMonth(@PathVariable String month) {
-        try {
-            List<Order> orders = ordersService.getOrdersByMonth(month);
-            if (orders.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(orders);
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().build();
         }
     }
 

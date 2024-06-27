@@ -1,13 +1,12 @@
+// src/pages/HomePage.js
 import React from 'react';
+import Menu from "../components/home.component";
 
-const HomePage = () => {
-    return (
-        <div>
-            <h1>Welcome to Your ERP System</h1>
-            <p>Here you can manage all aspects of your business.</p>
-            {/* Add links to other sections/pages of your ERP */}
-        </div>
-    );
-}
+const HomePage = () => (
+    <div className="container">
+        <h1>Home Page</h1>
+        <Menu/>
+    </div>
+);
 
 export default HomePage;

@@ -10,6 +10,7 @@ com/example/erp_system/service/OrderService.class
 com/example/erp_system/model/User$UserBuilder.class
 com/example/erp_system/exception/CustomExceptions$OrderCreationException.class
 com/example/erp_system/service/impl/OrderItemServiceImpl.class
+com/example/erp_system/config/CorsConfig.class
 com/example/erp_system/repository/OrderItemRepository.class
 com/example/erp_system/controller/orders/OrdersStatusController.class
 com/example/erp_system/service/RoleService.class
@@ -21,6 +22,7 @@ com/example/erp_system/service/impl/UserAuthServiceImpl$1.class
 com/example/erp_system/service/EmployerService.class
 com/example/erp_system/service/UserService.class
 com/example/erp_system/exception/CustomExceptions$OrderItemUpdateException.class
+com/example/erp_system/exception/CustomExceptions$DataIntegrityViolationException.class
 com/example/erp_system/service/ClientService.class
 com/example/erp_system/repository/OrderRepository.class
 com/example/erp_system/model/Role$RoleBuilder.class
@@ -35,12 +37,14 @@ com/example/erp_system/service/JwtService.class
 com/example/erp_system/dtos/request/SignUpRequest$SignUpRequestBuilder.class
 com/example/erp_system/repository/ItemsRepository.class
 com/example/erp_system/service/AuthenticationService.class
+com/example/erp_system/dtos/request/PasswordChangeRequest$PasswordChangeRequestBuilder.class
 com/example/erp_system/controller/items/CategoryController.class
 com/example/erp_system/controller/UserController.class
 com/example/erp_system/exception/CustomExceptions$OrderUpdateException.class
 com/example/erp_system/exception/CustomExceptions$UserNotFoundException.class
 com/example/erp_system/controller/employer/EmployerController.class
 com/example/erp_system/service/OrderStatusService.class
+com/example/erp_system/dtos/request/PasswordChangeRequest.class
 com/example/erp_system/controller/orders/OrderItemsController.class
 com/example/erp_system/repository/CategoryRepository.class
 com/example/erp_system/controller/items/ItemsController.class
