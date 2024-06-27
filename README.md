@@ -12,13 +12,7 @@ This is a simple ERP (Enterprise Resource Planning) system developed as a colleg
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/your-username/erp-project.git
-    ```
-
-2. Install the required dependencies:
-
-    ```bash
-    pip install -r requirements.txt
+    git clone https://github.com/ngmatos/erp.git
     ```
 
 ## Usage
@@ -26,10 +20,11 @@ This is a simple ERP (Enterprise Resource Planning) system developed as a colleg
 1. Run the application:
 
     ```bash
-    python main.py
+    docker-compose build
+    docker-compose up -d
     ```
 
-2. Access the application in your web browser at `http://localhost:5000`.
+2. Access the application in your web browser at `http://localhost:3000`.
 
 ## Contributing
 
