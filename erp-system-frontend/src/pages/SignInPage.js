@@ -5,9 +5,9 @@ import Login from "../components/auth/login.component";
 
 function SignInPage() {
     return (
-        <div>
+        <div className="container">
             <h1>Sign In Page</h1>
-            <Login />
+            <Login/>
             <Link to="/">Back to Choice Page</Link>
         </div>
     );

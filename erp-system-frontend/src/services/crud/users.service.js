@@ -16,6 +16,18 @@ class AllUsersService {
             });
     }
 
+    getAllRoles() {
+        return axios.get(API_URL + '/roles', { headers: authHeader() })
+            .then(response => {
+                console.log('Response:', response.data);
+                return response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching all roles:', error);
+                throw error;
+            });
+    }
+
     getAllAdmins() {
         return axios.get(API_URL + '/Admin', { headers: authHeader() })
             .then(response => {

@@ -3,9 +3,9 @@ import React from 'react';
 import Clients from "../components/clients.component";
 
 const ClientsPage = () => (
-    <div>
+    <div className="container">
         <h1>Clients Page</h1>
-        <Clients />
+        <Clients/>
     </div>
 );
 

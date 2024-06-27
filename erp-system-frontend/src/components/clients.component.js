@@ -238,7 +238,6 @@ export default class Clients extends Component {
                         <table className="table table-bordered table-striped">
                             <thead>
                             <tr>
-                                <th>ID</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Address</th>
@@ -249,7 +248,6 @@ export default class Clients extends Component {
                             <tbody>
                             {clients.map((client, index) => (
                                 <tr key={index}>
-                                    <td>{client.id}</td>
                                     <td onClick={() => this.openModalEdit(client)} style={{ cursor: 'pointer', color: 'blue' }}>
                                         {client.name}
                                     </td>

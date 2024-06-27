@@ -1,22 +1,20 @@
 import React, { Component } from "react";
-import { Routes, Route, Link, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
 import AuthService from "./services/auth.service";
-
-import Login from "./components/auth/login.component";
-import Register from "./components/auth/register.component";
-import HomePage from "./pages/HomePage";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import HomePage from "./pages/HomePage";
+import Login from "./components/auth/login.component";
+import Register from "./components/auth/register.component";
 import Profile from "./components/auth/profile.component";
 import UsersPage from "./pages/UsersPage";
 import ClientsPage from "./pages/ClientsPage";
 import EmployersPage from "./pages/EmployersPage";
 import OrdersPage from "./pages/OrdersPage";
 import ProductsPage from "./pages/ProductsPage";
-
 import EventBus from "./common/EventBus";
 
 class App extends Component {
@@ -44,9 +42,9 @@ class App extends Component {
 
     render() {
         return (
-            <div>
+            <div id="root">
                 <Header />
-                <div className="container mt-3">
+                <div className="main-content">
                     <Routes>
                         <Route path="/" element={<HomePage />} />
                         <Route path="/home" element={<HomePage />} />

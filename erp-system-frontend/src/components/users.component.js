@@ -36,7 +36,8 @@ export default class Users extends Component {
             successMessage: "", // Novo estado para mensagens de sucesso
             modalErrorMessage: "", // Novo estado para mensagens de erro no modal
             accessDenied: false, // Estado para gerenciar o acesso negado
-            accessDeniedMessage: "" // Mensagem de acesso negado
+            accessDeniedMessage: "", // Mensagem de acesso negado
+            roles: []
         };
     }
 
@@ -60,6 +61,7 @@ export default class Users extends Component {
 
                 // Carregar a lista de usuários após o componente montar
                 this.loadAllUsers();
+                this.loadRoles();
             }
         }
     }
@@ -73,6 +75,17 @@ export default class Users extends Component {
             .catch(error => {
                 console.error('Error fetching all users:', error);
                 this.setState({ error: true, errorMessage: "Failed to load users. Please try again later." });
+            });
+    }
+
+    loadRoles() {
+        AllUsersService.getAllRoles()
+            .then(roles => {
+                this.setState({ roles });
+            })
+            .catch(error => {
+                console.error('Error fetching roles:', error);
+                this.setState({ error: true, errorMessage: "Failed to load roles. Please try again later." });
             });
     }
 
@@ -94,7 +107,7 @@ export default class Users extends Component {
                 name: user.name,
                 email: user.email,
                 address: user.address,
-                role: { roleName: user.role.roleName, roleId: user.role.roleId }
+                role: user.role
             },
             successMessage: ""
         });
@@ -150,6 +163,7 @@ export default class Users extends Component {
     handleEditUser = event => {
         event.preventDefault();
         const { currentUserToEdit } = this.state;
+
         AllUsersService.editUser(currentUserToEdit.id, {
             name: currentUserToEdit.name,
             email: currentUserToEdit.email,
@@ -157,13 +171,32 @@ export default class Users extends Component {
         })
             .then(response => {
                 console.log('User updated:', response);
+
+                // Após atualizar os dados básicos do usuário, agora atualizamos a função
+                this.changeRole(currentUserToEdit.id, currentUserToEdit.role);
+            })
+            .catch(error => {
+                console.error('Error updating user:', error);
+                this.setState({ modalErrorMessage: "Failed to update user. Please try again later." });
+            });
+    };
+
+    changeRole = (userId, roleName) => {
+        AllUsersService.editRoleUser(userId, roleName)
+            .then(response => {
+                console.log('Role changed:', response);
+                this.setState(prevState => ({
+                    users: prevState.users.map(user =>
+                        user.id === userId ? { ...user, role: { roleName } } : user
+                    )
+                }));
                 this.closeEditModal();
                 this.loadAllUsers();
                 this.setState({ successMessage: "User updated successfully!" });
             })
             .catch(error => {
-                console.error('Error updating user:', error);
-                this.setState({ modalErrorMessage: "Failed to update user. Please try again later." });
+                console.error('Error changing role:', error);
+                this.setState({ error: true, errorMessage: "Failed to change role. Please try again later." });
             });
     };
 
@@ -223,10 +256,27 @@ export default class Users extends Component {
                                     Add User
                                 </button>
                             </header>
+                            {/* Alerta de erro */}
+                            {error && (
+                                <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                                    {errorMessage}
+                                    <button type="button" className="close" onClick={this.closeErrorAlert}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            )}
+                            {/* Alerta de sucesso */}
+                            {successMessage && (
+                                <div className="alert alert-success alert-dismissible fade show" role="alert">
+                                    {successMessage}
+                                    <button type="button" className="close" onClick={this.closeSuccessAlert}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            )}
                             <table className="table table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Address</th>
@@ -236,13 +286,12 @@ export default class Users extends Component {
                                 <tbody>
                                 {users.map((user, index) => (
                                     <tr key={index}>
-                                        <td>{user.id}</td>
                                         <td onClick={() => this.openEditModal(user)} style={{ cursor: 'pointer', color: 'blue' }}>
                                             {user.name}
                                         </td>
                                         <td>{user.email}</td>
                                         <td>{user.address}</td>
-                                        <td>{user.role.roleName} (ID: {user.role.roleId})</td>
+                                        <td>{user.role.roleName}</td>
                                     </tr>
                                 ))}
                                 </tbody>
@@ -396,13 +445,16 @@ export default class Users extends Component {
 
                                                     <div className="form-group">
                                                         <label htmlFor="role">Role</label>
-                                                        <Input
-                                                            type="text"
+                                                        <select
                                                             className="form-control"
                                                             name="role"
                                                             value={currentUserToEdit.role.roleName}
-                                                            readOnly
-                                                        />
+                                                            onChange={this.handleEditUserInputChange}
+                                                        >
+                                                            {this.state.roles.map((role, index) => (
+                                                                <option key={index} value={role.roleName}>{role.roleName}</option>
+                                                            ))}
+                                                        </select>
                                                     </div>
 
                                                     <div className="form-group">
@@ -435,24 +487,6 @@ export default class Users extends Component {
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            )}
-                            {/* Alerta de erro */}
-                            {error && (
-                                <div className="alert alert-danger alert-dismissible fade show" role="alert">
-                                    {errorMessage}
-                                    <button type="button" className="close" onClick={this.closeErrorAlert}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            )}
-                            {/* Alerta de sucesso */}
-                            {successMessage && (
-                                <div className="alert alert-success alert-dismissible fade show" role="alert">
-                                    {successMessage}
-                                    <button type="button" className="close" onClick={this.closeSuccessAlert}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
                                 </div>
                             )}
                         </div>

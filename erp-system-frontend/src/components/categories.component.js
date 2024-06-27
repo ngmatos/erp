@@ -288,14 +288,12 @@ export default class Categories extends Component {
                             <table className="table table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Name</th>
                                 </tr>
                                 </thead>
                                 <tbody className="text-center">
                                 {categories.map((category, index) => (
                                     <tr key={index}>
-                                        <td>{category.id}</td>
                                         <td
                                             onClick={() =>
                                                 this.openEditModal(

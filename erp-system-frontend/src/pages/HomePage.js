@@ -1,11 +1,11 @@
 // src/pages/HomePage.js
 import React from 'react';
-import Home from "../components/home.component";
+import Menu from "../components/home.component";
 
 const HomePage = () => (
-    <div className="users-page">
+    <div className="container">
         <h1>Home Page</h1>
-        <Home />
+        <Menu/>
     </div>
 );
 

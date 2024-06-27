@@ -3,9 +3,9 @@ import React from 'react';
 import Orders from "../components/orders.component";
 
 const OrdersPage = () => (
-    <div>
+    <div className="container">
         <h1>Orders Page</h1>
-        <Orders />
+        <Orders/>
     </div>
 );
 

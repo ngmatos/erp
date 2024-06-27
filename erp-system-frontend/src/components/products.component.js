@@ -37,6 +37,10 @@ export default class Products extends Component {
             accessDenied: false,
             accessDeniedMessage: "",
             categories: [], // Estado para armazenar categorias
+            modalRestock: false,
+            restockItems: [],
+            sortBy: 'orderNo', // Coluna inicial de ordenação
+            sortDirection: 'asc' // Direção inicial de ordenação
         };
     }
 
@@ -242,8 +246,33 @@ export default class Products extends Component {
         this.setState({ successMessage: "" });
     }
 
-    //Categories
+    // Products to restock (list of products with stock quantity less than 5)
 
+    restockProducts = () => {
+        this.loadAllProducts();
+        this.setState({
+            modalRestock: true,
+            successMessage: "",
+            restockItems: this.state.products.filter(item => item.stockQuantity < 5)
+        });
+    };
+
+    sortByColumn = (columnName) => {
+        const { sortBy, sortDirection } = this.state;
+
+        if (sortBy === columnName) {
+            // If already sorting by this column, toggle direction
+            this.setState(prevState => ({
+                sortDirection: prevState.sortDirection === 'asc' ? 'desc' : 'asc'
+            }));
+        } else {
+            // Otherwise, set new column to sort by and default to ascending order
+            this.setState({
+                sortBy: columnName,
+                sortDirection: 'asc'
+            });
+        }
+    }
 
 
     render() {
@@ -251,7 +280,7 @@ export default class Products extends Component {
             return <Navigate to={this.state.redirect} />;
         }
 
-        const { products, showModal, newItem, showEditModal, currentItemToEdit, error, errorMessage, successMessage, modalErrorMessage, accessDenied, accessDeniedMessage, categories } = this.state;
+        const { sortBy, sortDirection, modalRestock, restockItems, products, showModal, newItem, showEditModal, currentItemToEdit, error, errorMessage, successMessage, modalErrorMessage, accessDenied, accessDeniedMessage, categories } = this.state;
 
         return (
             <div className="container">
@@ -269,21 +298,49 @@ export default class Products extends Component {
                                 <button className="btn btn-primary" onClick={this.openModal}>
                                     Add Product
                                 </button>
+                                <button className="btn btn-primary" onClick={this.restockProducts}>
+                                    Restock Products
+                                </button>
                             </header>
                             <table className="table table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Category</th>
-                                    <th>Quantity</th>
+                                    <th onClick={() => this.sortByColumn('name')} style={{ cursor: 'pointer' }}>
+                                        Name
+                                        {sortBy === 'name' && (
+                                            <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>
+                                        )}
+                                    </th>
+                                    <th onClick={() => this.sortByColumn('category')} style={{ cursor: 'pointer' }}>
+                                        Category
+                                        {sortBy === 'category' && (
+                                            <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>
+                                        )}
+                                    </th>
+                                    <th onClick={() => this.sortByColumn('stockQuantity')} style={{ cursor: 'pointer' }}>
+                                        Quantity
+                                        {sortBy === 'stockQuantity' && (
+                                            <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>
+                                        )}
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody className="text-center">
-                                {products.map((item, index) => (
+                                {products.sort((a, b) => {
+                                    const isAscending = sortDirection === 'asc' ? 1 : -1;
+                                    if (sortBy === 'name') {
+                                        return a.name.localeCompare(b.name) * isAscending;
+                                    }
+                                    if (sortBy === 'category') {
+                                        return a.category.categoryName.localeCompare(b.category.categoryName) * isAscending;
+                                    }
+                                    if (sortBy === 'stockQuantity') {
+                                        return (a.stockQuantity - b.stockQuantity) * isAscending;
+                                    }
+                                }).map((item, index) => (
                                     <tr key={index}>
-                                        <td>{item.id}</td>
-                                        <td onClick={() => this.openEditModal(item)} style={{ cursor: 'pointer', color: 'blue' }}>
+                                        <td onClick={() => this.openEditModal(item)}
+                                            style={{cursor: 'pointer', color: 'blue'}}>
                                             {item.name}
                                         </td>
                                         <td>{item.category.categoryName}</td>
@@ -292,6 +349,44 @@ export default class Products extends Component {
                                 ))}
                                 </tbody>
                             </table>
+                            {/* Modal para restock */}
+                            {modalRestock && (
+                                <div className="modal" tabIndex="-1" role="dialog" style={{ display: "block" }}>
+                                    <div className="modal-dialog" role="document">
+                                        <div className="modal-content">
+                                            <div className="modal-header">
+                                                <h3 className="modal-title">Restock Products</h3>
+                                                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={() => this.setState({ modalRestock: false })}>
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div className="modal-body">
+                                                <table className="table table-bordered table-striped">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Category</th>
+                                                        <th>Quantity</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody className="text-center">
+                                                    {restockItems.map((item, index) => (
+                                                        <tr key={index}>
+                                                            <td>{item.name}</td>
+                                                            <td>{item.category.categoryName}</td>
+                                                            <td>{item.stockQuantity}</td>
+                                                        </tr>
+                                                    ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div className="modal-footer">
+                                                <button type="button" className="btn btn-secondary" onClick={() => this.setState({ modalRestock: false })}>Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                             {/* Modal para adicionar novo produto */}
                             {showModal && (
                                 <div className="modal" tabIndex="-1" role="dialog" style={{ display: "block" }}>

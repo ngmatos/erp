@@ -93,7 +93,7 @@ class AllItemsService {
     }
 
     //Admin Role or Employer Role
-    editStockQuantity(id, stockQuantity) {
+    removeStockQuantity(id, stockQuantity) {
         return axios.put(API_URL + '/stockQuantity/' + id + '/' + stockQuantity, { headers: authHeader() })
             .then(response => {
                 console.log('Response:', response.data);

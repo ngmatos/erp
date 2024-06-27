@@ -3,9 +3,9 @@ import React from 'react';
 import Employers from "../components/employers.component";
 
 const EmployersPage = () => (
-    <div>
+    <div className="container">
         <h1>Employers Page</h1>
-        <Employers />
+        <Employers/>
     </div>
 );
 

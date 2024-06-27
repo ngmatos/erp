@@ -5,9 +5,9 @@ import Register from "../components/auth/register.component";
 
 function SignUpPage() {
     return (
-        <div>
+        <div className="container">
             <h1>Sign Up Page</h1>
-            <Register />
+            <Register/>
             <Link to="/">Back to Choice Page</Link>
         </div>
     );

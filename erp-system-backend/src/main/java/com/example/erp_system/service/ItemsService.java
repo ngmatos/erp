@@ -13,4 +13,5 @@ public interface ItemsService {
     Items updateItem(int id, Items itemDetails);
     void deleteItem(int id);
     Items updateStockQuantity(int id, int stockQuantity);
+    Items removeStockQuantity(int id, int stockQuantity);
 }

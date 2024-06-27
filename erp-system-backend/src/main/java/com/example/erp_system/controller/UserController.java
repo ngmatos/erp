@@ -3,6 +3,7 @@ package com.example.erp_system.controller;
 import com.example.erp_system.dtos.request.PasswordChangeRequest;
 import com.example.erp_system.model.Role;
 import com.example.erp_system.model.User;
+import com.example.erp_system.service.RoleService;
 import com.example.erp_system.service.UserService;
 import com.example.erp_system.exception.CustomExceptions.UserNotFoundException;
 import com.example.erp_system.exception.CustomExceptions.UserCreationException;
@@ -28,10 +29,20 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RoleService roleService;
+
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @GetMapping("/roles")
+    public ResponseEntity<List<Role>> getAllRoles() {
+        List<Role> roles = roleService.getAllRoles();
+        return ResponseEntity.ok(roles);
     }
 
     @GetMapping("/Admin")

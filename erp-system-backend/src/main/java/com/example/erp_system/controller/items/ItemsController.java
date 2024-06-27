@@ -55,10 +55,10 @@ public class ItemsController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYER')")
     @PutMapping("/stockQuantity/{itemId}/{stockQuantity}")
-    public ResponseEntity<Items> updateStockQuantity(@PathVariable int itemId, @PathVariable int stockQuantity) {
+    public ResponseEntity<Items> removeStockQuantity(@PathVariable int itemId, @PathVariable int stockQuantity) {
         try {
-            Items item = itemsService.updateStockQuantity(itemId, stockQuantity);
-            return ResponseEntity.ok(item);
+            Items updatedItem = itemsService.removeStockQuantity(itemId, stockQuantity);
+            return ResponseEntity.ok(updatedItem);
         } catch (ItemsNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }

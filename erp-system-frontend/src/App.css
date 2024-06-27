@@ -73,13 +73,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Estilos para o Footer */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ocupa toda a altura da viewport */
+}
+
+/* Ajustes para o Footer */
 footer {
   background-color: #003366;
   padding: 15px 0;
   text-align: center;
-  position: fixed;
-  bottom: 0;
+  color: #ffffff;
+  flex-shrink: 0; /* Evita que o footer diminua de tamanho */
   width: 100%;
+}
+
+/* Estilo para o conteúdo principal */
+.main-content {
+  flex: 1; /* Ocupa o espaço restante */
 }
 
 footer p {

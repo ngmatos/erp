@@ -226,7 +226,6 @@ export default class Employers extends Component {
                             <table className="table table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Address</th>
@@ -236,7 +235,6 @@ export default class Employers extends Component {
                                 <tbody>
                                 {employers.map((user, index) => (
                                     <tr key={index}>
-                                        <td>{user.id}</td>
                                         <td onClick={() => this.openEditModal(user)} style={{ cursor: 'pointer', color: 'blue' }}>
                                             {user.name}
                                         </td>

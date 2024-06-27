@@ -63,7 +63,9 @@ export default class Orders extends Component {
                 email: "",
                 address: ""
             },
-            showCustomerModal: false
+            showCustomerModal: false,
+            sortBy: 'orderNo', // Coluna inicial de ordenação
+            sortDirection: 'asc' // Direção inicial de ordenação
         };
     }
 
@@ -201,6 +203,7 @@ export default class Orders extends Component {
                 }
             };
 
+
             AllOrdersService.createOrder(order)
                 .then(response => {
                     console.log('Order created:', response);
@@ -214,7 +217,7 @@ export default class Orders extends Component {
                 })
                 .catch(error => {
                     console.error('Error creating order:', error);
-                    this.setState({ modalErrorMessage: error.response.data.message });
+                    this.setState({ modalErrorMessage: "Failed to create order. Please try again later."});
                 });
         }
     }
@@ -429,6 +432,25 @@ export default class Orders extends Component {
         });
     }
 
+    // Sorting Functionality
+
+    sortByColumn = (columnName) => {
+        const { sortBy, sortDirection } = this.state;
+
+        if (sortBy === columnName) {
+            // If already sorting by this column, toggle direction
+            this.setState(prevState => ({
+                sortDirection: prevState.sortDirection === 'asc' ? 'desc' : 'asc'
+            }));
+        } else {
+            // Otherwise, set new column to sort by and default to ascending order
+            this.setState({
+                sortBy: columnName,
+                sortDirection: 'asc'
+            });
+        }
+    }
+
     render() {
         if (this.state.redirect) {
             return <Navigate to={this.state.redirect} />;
@@ -464,7 +486,9 @@ export default class Orders extends Component {
             statuses,
             items,
             currentCustomer,
-            showCustomerModal
+            showCustomerModal,
+            sortBy,
+            sortDirection
         } = this.state;
 
         return (
@@ -504,33 +528,88 @@ export default class Orders extends Component {
                             <table className="table table-bordered table-striped">
                                 <thead>
                                 <tr>
-                                    <th>Order Number</th>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                    <th>Customer</th>
-                                    <th>Status</th>
-                                    <th>Date Ordered</th>
-                                    <th>Date Created</th>
+                                    <th onClick={() => this.sortByColumn('orderNo')} style={{cursor: 'pointer'}}>
+                                        Order No
+                                        {sortBy === 'orderNo' && (
+                                            <span>{sortDirection === 'asc' ? ' ▲' : ' ▼'}</span>
+                                        )}
+                                    </th>
+                                    <th onClick={() => this.sortByColumn('product')} style={{cursor: 'pointer'}}>
+                                        Product
+                                        {sortBy === 'product' && (
+                                            <span>{sortDirection === 'asc' ? ' ▲' : ' ▼'}</span>
+                                        )}
+                                    </th>
+                                    <th onClick={() => this.sortByColumn('quantity')} style={{cursor: 'pointer'}}>
+                                        Quantity
+                                        {sortBy === 'quantity' && (
+                                            <span>{sortDirection === 'asc' ? ' ▲' : ' ▼'}</span>
+                                        )}
+                                    </th>
+                                    <th onClick={() => this.sortByColumn('customer')} style={{cursor: 'pointer'}}>
+                                        Customer
+                                        {sortBy === 'customer' && (
+                                            <span>{sortDirection === 'asc' ? ' ▲' : ' ▼'}</span>
+                                        )}
+                                    </th>
+                                    <th onClick={() => this.sortByColumn('status')} style={{cursor: 'pointer'}}>
+                                        Status
+                                        {sortBy === 'status' && (
+                                            <span>{sortDirection === 'asc' ? ' ▲' : ' ▼'}</span>
+                                        )}
+                                    </th>
+                                    <th onClick={() => this.sortByColumn('dateOrdered')} style={{cursor: 'pointer'}}>
+                                        Date Ordered
+                                        {sortBy === 'dateOrdered' && (
+                                            <span>{sortDirection === 'asc' ? ' ▲' : ' ▼'}</span>
+                                        )}
+                                    </th>
+                                    <th onClick={() => this.sortByColumn('dateCreated')} style={{cursor: 'pointer'}}>
+                                        Date Created
+                                        {sortBy === 'dateCreated' && (
+                                            <span>{sortDirection === 'asc' ? ' ▲' : ' ▼'}</span>
+                                        )}
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {orders.map((orderSingular, index) => (
-                                    <tr key={index}>
-                                        <td onClick={() => this.openEditModal(orderSingular)}
-                                            style={{cursor: 'pointer', color: 'blue'}}>
-                                            {orderSingular.order.orderNo}
-                                        </td>
-                                        <td>{orderSingular.item.name}</td>
-                                        <td>{orderSingular.quantity}</td>
-                                        <td onClick={() => this.openCustomerModal(orderSingular.order.customer)}  style={{cursor: 'pointer', color: 'blue'}}>
-                                            {orderSingular.order.customer.name}
-                                        </td>
-                                        <td>{orderSingular.order.orderStatus.status}</td>
-                                        {/*Mudar cor mediante o status*/}
-                                        <td>{formatDate(orderSingular.order.dateOrdered)}</td>
-                                        <td>{formatDate(orderSingular.order.dateCreated)}</td>
-                                    </tr>
-                                ))}
+                                {orders
+                                    .sort((a, b) => {
+                                        const isAscending = sortDirection === 'asc' ? 1 : -1;
+                                        if (sortBy === 'orderNo') {
+                                            return isAscending * (a.order.orderNo.localeCompare(b.order.orderNo));
+                                        } else if (sortBy === 'product') {
+                                            return isAscending * (a.item.name.localeCompare(b.item.name));
+                                        } else if (sortBy === 'quantity') {
+                                            return isAscending * (a.quantity - b.quantity);
+                                        } else if (sortBy === 'customer') {
+                                            return isAscending * (a.order.customer.name.localeCompare(b.order.customer.name));
+                                        } else if (sortBy === 'status') {
+                                            return isAscending * (a.order.orderStatus.status.localeCompare(b.order.orderStatus.status));
+                                        } else if (sortBy === 'dateOrdered') {
+                                            return isAscending * (a.order.dateOrdered.localeCompare(b.order.dateOrdered));
+                                        } else if (sortBy === 'dateCreated') {
+                                            return isAscending * (a.order.dateCreated.localeCompare(b.order.dateCreated));
+                                        }
+                                    })
+                                    .map(order => (
+                                        <tr key={order.id}>
+                                            <td onClick={() => this.openEditModal(order)}
+                                                style={{cursor: 'pointer', color: 'blue'}}>
+                                                {order.order.orderNo}
+                                            </td>
+                                            <td>{order.item.name}</td>
+                                            <td>{order.quantity}</td>
+                                            <td>
+                                                <button className="btn btn-link" onClick={() => this.openCustomerModal(order.order.customer)}>
+                                                    {order.order.customer.name}
+                                                </button>
+                                            </td>
+                                            <td>{order.order.orderStatus.status}</td>
+                                            <td>{formatDate(order.order.dateOrdered)}</td>
+                                            <td>{formatDate(order.order.dateCreated)}</td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                             {showCustomerModal && (
@@ -637,7 +716,7 @@ export default class Orders extends Component {
                                                             <option value="">Select a product</option>
                                                             {items.map(item => (
                                                                 <option key={item.id} value={item.id}>
-                                                                    {item.name}
+                                                                    {item.name} - {item.stockQuantity}
                                                                 </option>
                                                             ))}
                                                         </select>
@@ -742,7 +821,7 @@ export default class Orders extends Component {
                                                             <option value="">Select a product</option>
                                                             {items.map(item => (
                                                                 <option key={item.id} value={item.id}>
-                                                                    {item.name}
+                                                                    {item.name} - {item.stockQuantity}
                                                                 </option>
                                                             ))}
                                                         </select>

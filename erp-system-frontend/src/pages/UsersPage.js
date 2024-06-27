@@ -3,9 +3,9 @@ import React from 'react';
 import Users from "../components/users.component";
 
 const UsersPage = () => (
-    <div>
+    <div className="container">
         <h1>Users Page</h1>
-        <Users />
+        <Users/>
     </div>
 );
 
