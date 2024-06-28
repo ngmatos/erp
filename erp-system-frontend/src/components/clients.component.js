@@ -253,7 +253,7 @@ export default class Clients extends Component {
                                     </td>
                                     <td>{client.email}</td>
                                     <td>{client.address}</td>
-                                    <td>{client.role.roleName} (ID: {client.role.roleId})</td>
+                                    <td>{client.role.roleName}</td>
                                     <td>
                                         <span> {orderCounts[client.id] ? orderCounts[client.id] : 0} Orders </span>
                                         {orderCounts[client.id] > 0 && (

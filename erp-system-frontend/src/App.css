@@ -230,6 +230,13 @@ label {
   font-size: 24px;
 }
 
+.close-button {
+  background-color: transparent;
+  border: none;
+  font-size: 24px;
+  padding-left: 50rem;
+}
+
 .modal-title {
   margin: 0;
 }
@@ -325,11 +332,11 @@ label {
 
 /*button close without box*/
 .alert-success .close {
-    position: relative;
-    padding: 0.25rem 1.25rem;
-    top: 0;
-    right: 0;
-    color: inherit;
+  background-color: transparent;
+  padding: 0.25rem 1.25rem;
+  top: 0;
+  right: 0;
+  color: inherit;
 }
 
 .alert-danger {
@@ -338,17 +345,16 @@ label {
   border-color: #f5c6cb;
 }
 
-.alert .close {
-  position: relative;
-  color: inherit;
-}
-
 .alert-danger .close {
-  position: relative;
-  padding: 0.25rem 1.25rem;
+  background-color: transparent;
+  padding: 0.7rem 1.25rem;
   top: 0;
   right: 0;
   color: inherit;
+}
+
+.alert-danger .close:hover {
+  color: #721c24 !important;
 }
 
 .fade {

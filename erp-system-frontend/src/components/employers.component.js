@@ -240,7 +240,7 @@ export default class Employers extends Component {
                                         </td>
                                         <td>{user.email}</td>
                                         <td>{user.address}</td>
-                                        <td>{user.role.roleName} (ID: {user.role.roleId})</td>
+                                        <td>{user.role.roleName}</td>
                                     </tr>
                                 ))}
                                 </tbody>
