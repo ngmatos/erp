@@ -174,15 +174,34 @@ export default class Profile extends Component {
                                 Profile:<strong className="username-profile">{currentUser.user.email}</strong>
                             </h3>
                         </header>
-                        <div className="profile-card">
-                            {successMessage && (
-                                <div className="alert alert-success alert-dismissible fade show" role="alert">
-                                    {successMessage}
-                                    <button type="button" className="close-button" data-dismiss="alert" aria-label="Close" onClick={this.clearSuccessMessage}>
+                        {successMessage && (
+                            <div className="alert alert-success alert-dismissible fade show" role="alert">
+                                {successMessage}
+                                <button type="button" className="close-button" data-dismiss="alert" aria-label="Close" onClick={this.clearSuccessMessage}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        )}
+                        {passwordError && (
+                            <div className="form-group">
+                                <div className="alert alert-danger" role="alert">
+                                    {passwordError}
+                                    <button type="button" className="close" onClick={() => this.setState({ passwordError: "" })} aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                            )}
+                            </div>
+                        )}
+
+                        {errorMessage && (
+                            <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                                {errorMessage}
+                                <button type="button" className="close" data-dismiss="alert" aria-label="Close" onClick={this.clearErrorMessage}>
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        )}
+                        <div className="profile-card">
                             {!editMode ? (
                                 <div>
                                     <table className="table table-bordered">
@@ -318,26 +337,6 @@ export default class Profile extends Component {
                                             onChange={this.handlePasswordChange}
                                         />
                                     </div>
-
-                                    {passwordError && (
-                                        <div className="form-group">
-                                            <div className="alert alert-danger" role="alert">
-                                                {passwordError}
-                                                <button type="button" className="close" onClick={() => this.setState({ passwordError: "" })} aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {errorMessage && (
-                                        <div className="alert alert-danger alert-dismissible fade show" role="alert">
-                                            {errorMessage}
-                                            <button type="button" className="close" data-dismiss="alert" aria-label="Close" onClick={this.clearErrorMessage}>
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                    )}
 
                                     <div className="form-group">
                                         <button type="submit" className="btn btn-primary">
